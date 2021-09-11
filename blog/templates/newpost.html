@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+<!-- {% load static %}
+
+<script src="{% static 'js/tagsinput.js' %}"></script>
+<link href="{% static 'css/tagsinput.css' %}" rel="stylesheet"> -->
+{% block content %}
+  <div class="container my-5 z-depth-1">
+      <form method="post" action="" enctype="multipart/form-data" class="col-md-10">
+        {% csrf_token %}
+        {{ form|crispy }}
+        {{ form.media }}
+        
+        {{ form_image|crispy }}
+        {{ form_image.media }}
+        
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
+      <br>
+      <!-- <p><a href="{% url 'posts' %}">Return to home</a></p> -->
+
+      <!-- <script>
+        $('input').tagsinput({
+      confirmKeys: [13, 44]
+      });
+      </script> -->
+  </div>
+{% endblock %}

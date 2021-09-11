@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  {% for cat in categories %}
+  <h5>{{ cat.name }}</h5> <a href="/update_category/{{ cat.slug }}" class="btn btn-primary">Edit</a>
+  {% endfor %}
+  <br>
+{% endblock %}

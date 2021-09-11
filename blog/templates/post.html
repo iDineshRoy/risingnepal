@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8 blog-main">
+          {% if post %}
+              <div class="blog-post">
+                <h2 class="blog-post-title">{{ post.title }}</h2>
+                <p class="blog-post-meta">{{ post.created_date }} by <a href="#">{{ post.author }}</a></p>
+                
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.slug }}" width="100%" height="auto">
+                {% endif %}
+                
+                {{ post.text|safe }}
+                
+                <div class="row">
+                  {% for i in images %}
+                  <div class="col-md-4">
+                    <div class="thumbnail">
+                      <img src="{{ i.image.url }}" alt="{{ post.slug }}" width="180">
+                      <div class="caption">
+                        <p>{{ i.image.caption }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% for tag in post.tags.all %}
+                <a href="{% url 'tagged' tag.slug %}" class="mr-1 badge badge-info">{{ tag }}</a>
+                {% endfor %}
+
+              
+            </div>
+
+          {% endif %}
+
+          <br>
+          <!-- Update Post -->
+          {% if user.is_authenticated %}
+            {% if post %}
+              <a href="{% url 'update_post' post.slug %}" class="btn btn-primary btn-sm" role="button">Update Post</a>
+            {% endif %}
+          {% endif %}
+          <!-- End Update Post -->
+
+          </div>
+        </div>
+    </main>
+
+
+
+
+
+    
+
+
+    <br>
+    {% block cards %}
+    <main role="main" class="container">
+      <div class="row">
+        <div class="col-md-8 blog-main">
+        <!-- You may like -->
+        {% if suggestions %}
+        <h4>Read Similar</h4>
+        <div class="card-deck">
+            <div class="row d-flex justify-content-center">
+
+        {% for post in suggestions %}
+        <div class="px-1 py-1 d-flex align-items-stretch"> 
+            <div class="card" style="width: 16rem; margin-bottom: 0rem;">
+                
+              <a href="{% url 'post' post.slug %}"><img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" height="110"  style="object-fit: cover;"></a>
+                
+              <div class="card-body">
+                <a href="{% url 'post' post.slug %}"><h5 class="card-title">{{ post.title }}</h5></a>
+                <p class="card-text">{{ post.text|safe|truncatechars:80 }}</p>
+                <p class="card-text"><small class="text-muted">{{ post.created_date }}</small></p>
+              </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+
+        </div>
+        </div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {% endblock %}
+<br>
+{% endblock %}

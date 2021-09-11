@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<main role="main" class="container">
+    <div class="row">
+      <div class="col-md-8 blog-main">
+
+      <form method="post" action=""  enctype="multipart/form-data" class="col-md-10">
+        {% csrf_token %}
+          
+          {% crispy form %}
+          <p>Existing images: {{ images.count }}</p>
+          <div class="row">
+              {% for i in images %}
+              <div class="col-md-4">
+                <div class="thumbnail">
+                  <img src="{{ i.image.url }}" alt="hey" width="180">
+                  <div class="caption">
+                    <p>{{ i.image.caption }}</p>
+                  </div>
+                  <p>URL:{{ i.image.url }}</p>
+                </div>
+              </div>
+              {% endfor %}
+          </div> 
+        {% crispy form_image %}
+      </form>
+      </div>
+    </div>
+</main>
+{% endblock %}

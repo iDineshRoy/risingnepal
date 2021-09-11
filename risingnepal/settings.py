@@ -13,20 +13,20 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'bn%@6xs&7n_@+#1mae#o@q3bhp6pcdd4ju9--q3xoa2ymi$pb#'
+SECRET_KEY = '1w^$mii^qq+co8ox^%tusec-ekr66h6m!bn_2*fboq566*@r0^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['risingnepal.edu.np', 'www.risingnepal.edu.np', 'blog.risingnepal.edu.np', 'www.blog.risingnepal.edu.np', '127.0.0.1']
 
 
 # Application definition
@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'result',
+    'blog',
+    'ckeditor',
+    'taggit',
+    'crispy_forms',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -115,6 +120,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -124,3 +130,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+STATIC_ROOT = "/home2/risingnepal/static/"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'

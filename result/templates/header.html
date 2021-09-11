@@ -46,13 +46,16 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'home' %}">Home</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'posts' %}">Blog</a>
+          </li>
           <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Result
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a class="dropdown-item" href="result">Term-Wise Grade-Sheet</a>
-          <a class="dropdown-item" href="result/annual.php">Annual Grade-Sheet</a>
+          <a class="dropdown-item" href="{% url 'get_term' %}">Term-Wise Grade-Sheet</a>
+          <a class="dropdown-item" href="{% url 'get_annual' %}">Annual Grade-Sheet</a>
         </div>
       </li>
           
