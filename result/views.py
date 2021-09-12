@@ -208,51 +208,51 @@ def workbook_data(path, clas, studentid, ep):
 
 def annual_result(request):
     if request.method == 'POST':
-        # try:
-        year = request.POST['year']
-        studentid = int(request.POST['studentid'])
-        clas = request.POST['clas']
-        
-        mypath = os.path.join(BASE_DIR, "static/results/"+year+"/")
-        all_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-        
-        exams_filename = [os.path.splitext(name)[0] for name in all_files]
-        count = 0
-        marks = []
-        attendance = 0
-        for exam in all_files:
-            print(exam)
-            path = os.path.join(BASE_DIR, "static/results/"+year+"/"+exam)
-            subs, m, atten, full_marks, students_name = workbook_data(path, clas, studentid, (1/len(all_files)))
-            marks.append(list(m))
-            attendance = attendance + atten
-            # print(sub, marks)
-            count = count + 1
-        num = len(marks) #how many term marks are here
-        if num == 1:
-            new_marks = marks[0]
-        elif num == 2:
-            new_marks = [x+y for (x, y) in zip(marks[0], marks[1])]
-        elif num == 3:
-            new_marks = [x+y+z for (x, y, z) in zip(marks[0], marks[1], marks[2])]
-        elif num == 4:
-            new_marks = [x+y+z+aa for (x, y, z, aa) in zip(marks[0], marks[1], marks[2], marks[3])]
-        else:
-            print("Some error occured")
-        
-        grade, grade_point = marks_to_grades(new_marks, full_marks)
-        print(subs, marks, grade, grade_point)
-
         try:
-            gpa=round((sum(grade_point))/(len(grade_point)), 3)
+            year = request.POST['year']
+            studentid = int(request.POST['studentid'])
+            clas = request.POST['clas']
+            
+            mypath = os.path.join(BASE_DIR, "static/results/"+year+"/")
+            all_files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+            
+            exams_filename = [os.path.splitext(name)[0] for name in all_files]
+            count = 0
+            marks = []
+            attendance = 0
+            for exam in all_files:
+                print(exam)
+                path = os.path.join(BASE_DIR, "static/results/"+year+"/"+exam)
+                subs, m, atten, full_marks, students_name = workbook_data(path, clas, studentid, (1/len(all_files)))
+                marks.append(list(m))
+                attendance = attendance + atten
+                # print(sub, marks)
+                count = count + 1
+            num = len(marks) #how many term marks are here
+            if num == 1:
+                new_marks = marks[0]
+            elif num == 2:
+                new_marks = [x+y for (x, y) in zip(marks[0], marks[1])]
+            elif num == 3:
+                new_marks = [x+y+z for (x, y, z) in zip(marks[0], marks[1], marks[2])]
+            elif num == 4:
+                new_marks = [x+y+z+aa for (x, y, z, aa) in zip(marks[0], marks[1], marks[2], marks[3])]
+            else:
+                print("Some error occured")
+            
+            grade, grade_point = marks_to_grades(new_marks, full_marks)
+            print(subs, marks, grade, grade_point)
+
+            try:
+                gpa=round((sum(grade_point))/(len(grade_point)), 3)
+            except:
+                print("Mark missing")
+                gpa=""
+            # attendance = '234' #just for now
+            data = [{'subjects': t[0], 'grade': t[1], 'grade_point':t[2]} for t in zip(subs, grade, grade_point)]
+            return render(request, 'termwise.html', context={ 'students_name': students_name, 'clas':clas, 'marks':marks,   'gpa':gpa, 'attendance':attendance, 'data':data, 'exams_filename': exams_filename})
         except:
-            print("Mark missing")
-            gpa=""
-        # attendance = '234' #just for now
-        data = [{'subjects': t[0], 'grade': t[1], 'grade_point':t[2]} for t in zip(subs, grade, grade_point)]
-        return render(request, 'termwise.html', context={ 'students_name': students_name, 'clas':clas, 'marks':marks,   'gpa':gpa, 'attendance':attendance, 'data':data, 'exams_filename': exams_filename})
-        # except:
-        #     pass
+            pass
     return render(request, 'termwise.html')
 
 def get_annual(request):
