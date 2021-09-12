@@ -22,39 +22,15 @@
 			{% endfor %}
 			</select>
 			Class:<select name="clas" class="browser-default custom-select custom-select">
-			<option value="Nursery">Nursery</option>
-			<option value="Nursery A">Nursery A</option>
-			<option value="Nursery B">Nursery B</option>
-			<option value="LKG">LKG</option>
-			<option value="LKG A">LKG A</option>
-			<option value="LKG B">LKG B</option>
-			<option value="UKG">UKG</option>
-			<option value="UKG A">UKG A</option>
-			<option value="UKG B">UKG B</option>
-			<option value="UKG C">UKG C</option>
-			<option value="One">One</option>
-			<option value="One A">One A</option>
-			<option value="One B">One B</option>
-			<option value="Two">Two</option>
-			<option value="Two A">Two A</option>
-			<option value="Two B">Two B</option>
-			<option value="Three">Three</option>
-			<option value="Three A">Three A</option>
-			<option value="Three B">Three B</option>
-			<option value="Four">Four</option>
-			<option value="Five">Five</option>
-			<option value="Six">Six</option>
-			<option value="Seven">Seven</option>
-			<option value="Eight">Eight</option>
-			<option value="Nine">Nine</option>
-			<option value="Ten">Ten</option>
-			<option value="Eleven">Eleven</option>
+			{% for y in classes %}
+			<option value="{{ y }}">{{ y }}</option>
+			{% endfor %}
+			
 			</select>
 			Exam:<select name="exam" class="browser-default custom-select custom-select">
-			<option value="First Term">First Term</option>
-			<option value="Second Term">Second Term</option>
-			<option value="Third Term">Third Term</option>
-			<option value="Fourth Term">Fourth Term</option>
+			{% for y in terms %}
+			<option value="{{ y }}">{{ y }}</option>
+			{% endfor %}
 			</select>
 			<br>
 			<br>
