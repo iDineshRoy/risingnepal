@@ -1,1 +1,0 @@
-document.getElementById('demo').innerHTML = 'Hello JavaScript& how are you';

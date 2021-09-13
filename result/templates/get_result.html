@@ -16,22 +16,17 @@
 				  {% csrf_token %}
 				  Enter your student ID: <input name="studentid" type="text" class="form-control" > 
 				
-			Year:<select name="year" class="browser-default custom-select custom-select">
+			Year:<select name="year" id="year-option" class="browser-default custom-select custom-select" onclick="searchClasses">
+			<option value="-- Select Year --">-- Select Year --</option>
 			{% for y in years %}
 			<option value="{{ y }}">{{ y }}</option>
 			{% endfor %}
 			</select>
-			Class:<select name="clas" class="browser-default custom-select custom-select">
-			{% for y in classes %}
-			<option value="{{ y }}">{{ y }}</option>
-			{% endfor %}
+			Class:<input name="clas" list="search-classes" class="browser-default custom-select custom-select">
+			<datalist id="search-results"></datalist>
 			
-			</select>
-			Exam:<select name="exam" class="browser-default custom-select custom-select">
-			{% for y in terms %}
-			<option value="{{ y }}">{{ y }}</option>
-			{% endfor %}
-			</select>
+			Exam:<input name="exam" list="search-terms" class="browser-default custom-select custom-select">
+			
 			<br>
 			<br>
 			<button class="btn btn-primary" type="submit">See Result</button>
@@ -66,4 +61,8 @@
   </section>
   <!--Section: Content-->
 </div>
+{% load static %}
+<script type="text/javascript" src="{% static 'js/result/ajax.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/d3js/5.15.1/d3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {% endblock %}

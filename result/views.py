@@ -172,7 +172,7 @@ def get_result(request):
             path = os.path.join(BASE_DIR, "static/results/"+year+"/"+term)
             workbook = xlrd.open_workbook(path, on_demand=True)
             classes.update(workbook.sheet_names())
-    context['classes']=sorted(list(classes))
+    # context['classes']=sorted(list(classes))
     context['terms']=sorted(list(terms_list))
     return render(request, 'get_result.html', context)
 
@@ -270,3 +270,24 @@ def get_annual(request):
             classes.update(workbook.sheet_names())
     context['classes']=sorted(list(classes))
     return render(request, 'get_annual.html', context)
+
+def get_classes(request):
+    print("Now this funtion is working")
+    if request.is_ajax():
+        year = request.POST.get('get-year')
+    else:
+        year = ''
+    context = {}
+    classes = set()
+    terms_list = set()
+    new_path = os.path.join(BASE_DIR, "static/results/"+year)
+    terms = [name for name in os.listdir(new_path)]
+    terms_list.update([name.replace(".xlsx", "") for name in os.listdir(new_path)])
+    for term in terms:
+        path = os.path.join(BASE_DIR, "static/results/"+year+"/"+term)
+        workbook = xlrd.open_workbook(path, on_demand=True)
+        classes.update(workbook.sheet_names())
+    context['classes']=sorted(list(classes))
+    print(context['classes'])
+    context['terms']=sorted(list(terms_list))
+    return render(request,'getclasses.html', context)
