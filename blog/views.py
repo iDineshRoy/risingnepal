@@ -51,11 +51,10 @@ def paginate(request, posts):
 def posts(request):
     context = {}
     try:
-        qset = functools.reduce(operator.__and__, [
-            Q(status__iexact='Published')
-            ])
-        posts = Post.objects.filter(qset).order_by('-id')
-        # posts = get_list_or_404(Post.objects.order_by('-id'))
+        # qset = functools.reduce(operator.__and__, [
+        #     Q(status__iexact='Published')
+        #     ])
+        posts = Post.objects.all().order_by('-id')
         
         if posts is not None:
             context['posts'] = paginate(request, posts)
@@ -75,11 +74,7 @@ def posts(request):
 def showpost(request, slug):
     post = get_object_or_404(Post, slug=slug)
     context =  { 'post': post }
-    context['suggestions'] = get_suggestions(slug)
-    # context['menu'] = get_category()
-    context['recent'] = get_recent()
-    # context['pages'] = get_pages()
-    context['title'] = get_object_or_404(Post, slug=slug).title
+    context['suggestions'] = get_suggestions(post.slug)
     return render(request, 'post.html', context)
 
 def model_form_upload(request):
@@ -204,7 +199,7 @@ def update_post(request, slug):
     context = {"title": "Update Post", "form":form,'images':images, 'form_image':form_image}
     # context['menu'] = get_category()
     # context['pages'] = get_pages()
-    return render(request, 'updatepost.html', context)
+    return render(request, 'newpost.html', context)
 
 def edit_about(request):
     # try

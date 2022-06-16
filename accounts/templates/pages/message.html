@@ -3,7 +3,7 @@
 <div class="container" id="searchdivmain">
     <div class="col justify-content-center">
         <div class="row justify-content-center">
-            <h4><br><br><br>{{ message }}</h4><br>
+            <h4><br><br><br>{{ message|safe }}</h4><br>
         </div>
         <!-- <div class="row justify-content-center">
             {% if userobj == user %}
@@ -21,5 +21,4 @@
         </div> -->
     </div>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 {% endblock %}

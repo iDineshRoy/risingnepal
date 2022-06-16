@@ -15,8 +15,8 @@ $(function(){
 function searchClasses(data)
 {
     var city = document.getElementById('search-classes');
-    $(city).empty();
+    
     var town = document.getElementById('search-terms');
     $(town).empty();
-    $('#search-results').html(data)  
+    $('#search-results').html(data);
 }

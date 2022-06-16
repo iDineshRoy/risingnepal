@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+<br>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{% url 'qbank:show_year' %}">All Questions</a>
+        </li>
+    </ul>
+    <br>
+    <ul>
+    <div class="list-group">
+        {% for year in years %}
+            <a href="{% url 'qbank:show_terms' year %}" class="list-group-item list-group-item-action list-group-item-light">{{ year }}</a>
+        {% endfor %}
+    </div>
+    </ul>
+</div>
+{% endblock %}

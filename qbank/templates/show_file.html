@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <br>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'qbank:show_year' %}">All Questions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'qbank:show_terms' year %}">{{ year }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'qbank:show_questions' year term %}">{{ term }}</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#">{{ file }}</a>
+        </li>
+    </ul>
+    <br>
+    {{ question|safe }}
+</div>
+{% endblock %}

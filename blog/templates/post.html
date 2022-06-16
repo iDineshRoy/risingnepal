@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{% if post %}<title>{{ post.title }}</title>{% endif %}{% endblock %}
 
 {% block content %}
+<body class="canvas-container">
+
+<br><br>
   <main role="main" class="container">
-      <div class="row">
+      <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
         <div class="col-md-8 blog-main">
           {% if post %}
               <div class="blog-post">
                 <h2 class="blog-post-title">{{ post.title }}</h2>
-                <p class="blog-post-meta">{{ post.created_date }} by <a href="#">{{ post.author }}</a></p>
+                <p class="blog-post-meta">{{ post.created_date }}</p>
                 
                 {% if post.image %}
                 <img src="{{ post.image.url }}" alt="{{ post.slug }}" width="100%" height="auto">
@@ -37,7 +40,6 @@
 
           {% endif %}
 
-          <br>
           <!-- Update Post -->
           {% if user.is_authenticated %}
             {% if post %}
@@ -45,54 +47,38 @@
             {% endif %}
           {% endif %}
           <!-- End Update Post -->
-
+          <br><br>
           </div>
-        </div>
-    </main>
-
-
-
-
-
-    
-
-
-    <br>
+          
+        </div> <br>
+    <hr>
     {% block cards %}
-    <main role="main" class="container">
-      <div class="row">
-        <div class="col-md-8 blog-main">
-        <!-- You may like -->
-        {% if suggestions %}
-        <h4>Read Similar</h4>
-        <div class="card-deck">
-            <div class="row d-flex justify-content-center">
-
-        {% for post in suggestions %}
-        <div class="px-1 py-1 d-flex align-items-stretch"> 
-            <div class="card" style="width: 16rem; margin-bottom: 0rem;">
-                
-              <a href="{% url 'post' post.slug %}"><img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" height="110"  style="object-fit: cover;"></a>
-                
-              <div class="card-body">
-                <a href="{% url 'post' post.slug %}"><h5 class="card-title">{{ post.title }}</h5></a>
-                <p class="card-text">{{ post.text|safe|truncatechars:80 }}</p>
+    <div class="container-fluid">
+    <div class="col-12 col-md-10 mb-3 mx-auto">
+      
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          
+          {% for post in suggestions %}
+          <div class="px-1 py-1 d-flex align-items-stretch"> 
+            
+            <div class="card" style="width: 18rem; margin-bottom: 0rem;">
+              <a href="{% url 'post' post.slug %}">{% if post.image %}<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" height="110"  style="object-fit: cover;">{% endif %}</a>
+              <div class="card-body card-body-cascade">
+                <a href="{% url 'post' post.slug %}" class="card-link"><h5 class="card-title">{{ post.title }}</h5></a>
+                <p class="card-text">{{ post.text|safe|truncatechars_html:80 }}</p>
                 <p class="card-text"><small class="text-muted">{{ post.created_date }}</small></p>
               </div>
             </div>
+          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
-
-
-
-        </div>
-        </div>
-        {% endif %}
-        </div>
-      </div>
     </div>
-  </main>
+    </div>
 
+    </main>
+    
   {% endblock %}
+  
 <br>
+</body>
 {% endblock %}

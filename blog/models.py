@@ -18,7 +18,7 @@ class Post(models.Model):
     text = RichTextField()
     slug = models.SlugField(unique=True, max_length=250)
     created_date = models.DateTimeField(default=timezone.now)
-    status = models.CharField(max_length=50, null=True, blank=True)
+    status = models.CharField(max_length=50, null=True, blank=True, default="Published")
     tags = TaggableManager()
     category = models.ForeignKey(Category, on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(upload_to='images/', blank=True, null=True)

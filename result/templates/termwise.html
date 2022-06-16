@@ -29,8 +29,53 @@
 		GRADE POINT AVERAGE (GPA): {{ gpa }} <br>
 		ATTENDANCE: {{ attendance }}
 </div>
+<hr>
+	{% if exams_filename %}
+	<div>
+		<small>Above Grade-Sheet is combined from: {% for s in exams_filename %} {{ s }}, {% endfor %} exams.</small>
+	</div>
+	<br>
+    {% endif %}
+    <div>
+      <table class="table table-secondary">
+      <tr>
+      <th>S.N.</th><th>Percentage Interval</th><th>Grade Point</th><th>Grade</th><th>Description</th>
+      </tr>
+      <tr>
+      <td>1</td><td>90% to 100%</td><td>3.6 to 4</td><td>A+</td><td>Outstanding</td>
+      </tr>
+      <tr>
+      <td>2</td><td>80% to Below 90%</td><td>3.2 to 3.6</td><td>A</td><td>Excellent</td>
+      </tr>
+      <tr>
+      <td>3</td><td>70% to Below 80%</td><td>2.8 to 3.2</td><td>B+</td><td>Very Good</td>
+      </tr>
+      <tr>
+      <td>4</td><td>60% to Below 70%</td><td>2.4 to 2.8</td><td>B</td><td>Good</td>
+      </tr>
+      <tr>
+      <td>5</td><td>50% to Below 60%</td><td>2.0 to 2.4</td><td>C+</td><td>Satisfactory</td>
+      </tr>
+      <tr>
+      <td>6</td><td>40% to Below 50%</td><td>1.6 to 2.0</td><td>C</td><td>Acceptable</td>
+      </tr>
+      <tr>
+      <td>7</td><td>30% to Below 40%</td><td>1.2 to 1.6</td><td>D+</td><td>Partially Acceptable</td>
+      </tr>
+      <tr>
+      <td>8</td><td>20% to Below 30%</td><td>0.8 to 1.2</td><td>D</td><td>Insufficient</td>
+      </tr>
+      <tr>
+      <td>9</td><td>0% to Below 20%</td><td>0 to 0.8</td><td>E</td><td>Very Insufficient</td>
+      </tr>
+    </table>
+    </div>
+	
 </div>
 	
+
+  
+
 
 
 {% endblock %}

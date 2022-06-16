@@ -16,12 +16,12 @@
 				  {% csrf_token %}
 				  Enter your student ID: <input name="studentid" type="text" class="form-control" > 
 				
-			Year:<select name="year" class="browser-default custom-select custom-select">
+			Year:<select name="year" class="form-control">
 			{% for y in years %}
 			<option value="{{ y }}">{{ y }}</option>
 			{% endfor %}
 			</select>
-			Class:<select name="clas" class="browser-default custom-select custom-select">
+			Class:<select name="clas" class="form-control">
 			{% for y in classes %}
 			<option value="{{ y }}">{{ y }}</option>
 			{% endfor %}

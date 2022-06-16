@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'blog',
     'ckeditor',
     'taggit',
-    'crispy_forms',
     'accounts',
+    'bootstrap5',
+    'qbank',
 ]
 
 MIDDLEWARE = [

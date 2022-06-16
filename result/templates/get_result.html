@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <div class="container my-5 z-depth-1">
 
 <br>
@@ -12,20 +13,21 @@
         
           
           <div class="jumbotron">
-			  <form action="{% url 'termwise' %}" method="post">
+			<form action="{% url 'termwise' %}" method="post">
 				  {% csrf_token %}
 				  Enter your student ID: <input name="studentid" type="text" class="form-control" > 
 				
-			Year:<select name="year" id="year-option" class="browser-default custom-select custom-select" onclick="searchClasses">
+			Year:<select name="year" id="year-option" class="form-control" onclick="searchClasses">
 			<option value="-- Select Year --">-- Select Year --</option>
 			{% for y in years %}
-			<option value="{{ y }}">{{ y }}</option>
+			<option value="{{ y }}" class="form-control">{{ y }}</option>
 			{% endfor %}
 			</select>
-			Class:<input name="clas" list="search-classes" class="browser-default custom-select custom-select">
 			<datalist id="search-results"></datalist>
-			
-			Exam:<input name="exam" list="search-terms" class="browser-default custom-select custom-select">
+			Class:
+			<input list="search-classes" name="clas" class="form-control">
+			Exam:
+			<input list="search-terms" name="exam" class="form-control">
 			
 			<br>
 			<br>
