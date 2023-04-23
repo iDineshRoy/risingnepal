@@ -1,6 +1,7 @@
 from django.db import models
 
 from domain.aggregates.base import BaseModel, BaseJunctionModel
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
 class StudentModel(BaseModel):
@@ -12,93 +13,41 @@ class StudentModel(BaseModel):
     address = models.CharField(max_length=200, blank=True, null=True)
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     admitted_on = models.DateField(blank=True, null=True)
-    year = models.ManyToManyField("YearModel", through="YearStudentModel", blank=True)
-    year_grade = models.ManyToManyField(
-        "YearGradeModel", through="YearGradeStudentModel", blank=True
-    )
     year_grade_section = models.ManyToManyField(
         "YearGradeSectionModel", through="YearGradeSectionStudentModel", blank=True
     )
+    parents = models.ManyToManyField(
+        "ParentModel", through="StudentParentModel", blank=True
+    )
+    attendance = models.ManyToManyField(
+        "AttendanceModel", through="StudentAttendanceModel", blank=True
+    )
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
     class Meta:
         db_table = "students"
         app_label = "student"
 
 
-class YearModel(BaseModel):
-    # This is for the academic year
-    year = models.IntegerField()
-    year_ad = models.IntegerField(blank=True, null=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
-    grades = models.ManyToManyField("GradeModel", through="YearGradeModel")
-
-    class Meta:
-        db_table = "years"
-        app_label = "student"
-
-
-class GradeModel(BaseModel):
-    # This is for the class. Domain word is class, but we use grade
-    # For Python reasons
-    grade = models.CharField(max_length=20)
-    grade_num = models.IntegerField(blank=True, null=True)
-    description = models.CharField(max_length=100, blank=True, null=True)
-    years = models.ManyToManyField("YearModel", through="YearGradeModel")
-
-    class Meta:
-        db_table = "grades"
-        app_label = "student"
-
-
-class SectionModel(BaseModel):
-    # This is for the class. Domain word is class, but we use grade
-    # For Python reasons
-    section = models.CharField(max_length=20)
-    section_num = models.IntegerField(blank=True, null=True)
+class YearGradeSectionModel(BaseModel):
+    year = models.IntegerField(
+        validators=[MinLengthValidator(4), MaxLengthValidator(4)], blank=True, null=True
+    )
+    year_ad = models.IntegerField(
+        validators=[MinLengthValidator(4), MaxLengthValidator(4)], blank=True, null=True
+    )
+    grade = models.CharField(max_length=20, blank=True, null=True)
+    section = models.CharField(max_length=20, blank=True, null=True)
     description = models.CharField(max_length=100, blank=True, null=True)
 
-    class Meta:
-        db_table = "sections"
-        app_label = "student"
-
-
-class YearGradeModel(BaseJunctionModel):
-    year = models.ForeignKey(YearModel, on_delete=models.CASCADE)
-    grade = models.ForeignKey(GradeModel, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.year} {self.grade} {self.section}"
 
     class Meta:
-        unique_together = ("year", "grade")
-        db_table = "year_grades"
-        app_label = "student"
-
-
-class YearGradeStudentModel(BaseJunctionModel):
-    year_grade = models.ForeignKey(YearGradeModel, on_delete=models.CASCADE)
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ("year_grade", "student")
-        db_table = "year_grade_students"
-        app_label = "student"
-
-
-class GradeSectionModel(BaseJunctionModel):
-    grade = models.ForeignKey(GradeModel, on_delete=models.CASCADE)
-    section = models.ForeignKey(SectionModel, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ("grade", "section")
-        db_table = "grade_sections"
-        app_label = "student"
-
-
-class YearGradeSectionModel(BaseJunctionModel):
-    year_grade = models.ForeignKey(YearGradeModel, on_delete=models.CASCADE)
-    section = models.ForeignKey(SectionModel, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ("year_grade", "section")
-        db_table = "year_grade_sections"
+        unique_together = ("year", "grade", "section")
+        db_table = "year_grade_section"
         app_label = "student"
 
 
@@ -112,19 +61,7 @@ class YearGradeSectionStudentModel(BaseJunctionModel):
         unique_together = ("year_grade_section", "student")
         db_table = "year_grade_section_students"
         app_label = "student"
-
-
-class YearStudentModel(BaseJunctionModel):
-    # This is the junction table that contains the number of
-    # all the students in a year
-
-    year = models.ForeignKey(YearModel, on_delete=models.CASCADE)
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ("year", "student")
-        db_table = "year_students"
-        app_label = "student"
+        verbose_name = "year_grade_section_students"
 
 
 class ParentModel(BaseModel):
@@ -134,9 +71,13 @@ class ParentModel(BaseModel):
     email = models.EmailField(blank=True)
     address = models.CharField(max_length=200, blank=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
     class Meta:
         db_table = "parents"
         app_label = "student"
+        verbose_name = "parents"
 
 
 class StudentParentModel(BaseJunctionModel):
@@ -144,73 +85,38 @@ class StudentParentModel(BaseJunctionModel):
     parent = models.ForeignKey(ParentModel, on_delete=models.CASCADE, to_field="id")
     relationship = models.CharField(max_length=50)
 
+    def __str__(self):
+        return f"Student: {self.student.first_name} {self.student.last_name}, Parent: {self.parent.first_name} {self.parent.last_name}"
+
     class Meta:
         unique_together = ("student", "parent")
         db_table = "student_parents"
         app_label = "student"
+        verbose_name = "student_parents"
 
 
-# class Student(Entity):
-#     _first_name: str
-#     _last_name: str
-#     _roll_number: int | None
-#     _grade: str | None
-#     _dob: date | None
-#     _address: str | None
-#     _phone_number: str | None
+class AttendanceModel(BaseModel):
+    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
+    date = models.DateField()
+    present = models.BooleanField(default=False)
+    year_grade_section = models.ForeignKey(
+        YearGradeSectionModel, on_delete=models.CASCADE, blank=True
+    )
 
-#     def __init__(
-#         self,
-#         id: int,
-#         first_name: str,
-#         last_name: str,
-#         roll_number: int | None,
-#         grade: str,
-#         dob: date | None,
-#         address: str | None,
-#         phone_number: str | None,
-#     ):
-#         super().__init__(id)
-#         self._first_name = first_name
-#         self._last_name = last_name
-#         self._roll_number = roll_number
-#         self._grade = grade
-#         self._dob = dob
-#         self._address = address
-#         self._phone_number = phone_number
+    def __str__(self):
+        return f"{self.student.first_name} {self.student.last_name} {self.date}"
+
+    class Meta:
+        unique_together = ("student", "date")
+        db_table = "attendances"
+        app_label = "student"
 
 
-# class Parent(Entity):
-#     _first_name: str
-#     _last_name: str
-#     _address: str
-#     _phone_number: str
-#     _email: str
+class StudentAttendanceModel(BaseJunctionModel):
+    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
+    attendance = models.ForeignKey(AttendanceModel, on_delete=models.CASCADE)
 
-#     def __init__(
-#         self,
-#         id: int,
-#         first_name: str,
-#         last_name: str,
-#         address: str,
-#         phone_number: str,
-#         email: str,
-#     ):
-#         super().__init__(id)
-#         self._first_name = first_name
-#         self._last_name = last_name
-#         self._phone_number = phone_number
-#         self._email = email
-#         self._address = address
-
-
-# class StudentParent:
-#     _student_id: int
-#     _parent_id: int
-#     _relationship: str
-
-#     def __init__(self, student_id: int, parent_id: int, relationship: str):
-#         super().__init__()
-#         self._student_id = student_id
-#         self._parent_id = parent_id
-#         self._relationship = relationship
+    class Meta:
+        db_table = "student_attendances"
+        app_label = "student"
+        verbose_name = "student_attendances"

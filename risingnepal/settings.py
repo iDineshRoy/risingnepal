@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "qbank",
     "student",
     # domain model components
+    "rest_framework",
 ]
 
 MIDDLEWARE = [

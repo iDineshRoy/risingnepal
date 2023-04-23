@@ -24,7 +24,7 @@ class BaseRepository:
         obj.delete()
 
     def get_all(self):
-        return self.model.objects.all()
+        return self.model.objects.all().order_by("-created")
 
     def filter(self, **kwargs):
         return self.model.objects.filter(**kwargs)
@@ -67,27 +67,49 @@ class BaseJunctionRepository:
     ) -> models.Model:
         left_instance = self.left_model.objects.create(**left_data)
         right_instance = self.right_model.objects.create(**right_data)
-        junction_instance = self.junction_model.objects.create(
-            left_instance, right_instance
-        )
+        if junction_data is not None:
+            junction_data.update(
+                {
+                    f"{self.left_model.__name__.lower().rstrip('model')}": left_instance,
+                    f"{self.right_model.__name__.lower().rstrip('model')}": right_instance,
+                }
+            )
+            junction_instance = self.junction_model.objects.create(**junction_data)
+        else:
+            junction_instance = self.junction_model.objects.create(
+                **{
+                    f"{self.left_model.__name__.lower().rstrip('model')}": left_instance,
+                    f"{self.right_model.__name__.lower().rstrip('model')}": right_instance,
+                }
+            )
         return junction_instance
 
-    def get(self, **kwargs) -> models.Model:
-        return self.junction_model.objects.get(**kwargs)
+    def get(self, **kwargs) -> models.Model | None:
+        return self.junction_model.objects.first(**kwargs)
+
+    def fetch_left_and_right(self, **kwargs):
+        left_q = self.left_model.objects.all().order_by("-created")
+        return left_q
+
+    def fetch(self, **kwargs):
+        query = self.junction_model.objects.all(**kwargs).order_by("-created")
+        return query
 
     def filter(self, **kwargs) -> List[models.Model]:
-        return list(self.junction_model.objects.filter(**kwargs))
+        return list(self.junction_model.objects.filter(**kwargs).order_by("-created"))
 
     def get_or_create(self, defaults: dict = None, **kwargs) -> (models.Model, bool):
         left_instance, left_created = self.left_model.objects.get_or_create(
-            **kwargs.pop(f"{self.left_model.__name__.lower()}_data"), defaults=defaults
+            **kwargs.pop(f"{self.left_model.__name__.lower().rstrip('model')}_data"),
+            defaults=defaults,
         )
         right_instance, right_created = self.right_model.objects.get_or_create(
-            **kwargs.pop(f"{self.right_model.__name__.lower()}_data"), defaults=defaults
+            **kwargs.pop(f"{self.right_model.__name__.lower().rstrip('model')}_data"),
+            defaults=defaults,
         )
         junction_defaults = {
-            f"{self.left_model.__name__.lower()}": left_instance,
-            f"{self.right_model.__name__.lower()}": right_instance,
+            f"{self.left_model.__name__.lower().rstrip('model')}": left_instance,
+            f"{self.right_model.__name__.lower().rstrip('model')}": right_instance,
         }
         if defaults:
             junction_defaults.update(defaults)

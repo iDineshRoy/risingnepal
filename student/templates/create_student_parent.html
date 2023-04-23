@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+{% block content %}
+  <div class="container my-5 z-depth-1">
+      <form id="my-form" method="post" action="" enctype="multipart/form-data" class="col-md-10">
+        {% csrf_token %}
+        <h2>Student and Parent/Guardian Details</h2>
+        <h3>Student Details</h3>
+        {% bootstrap_form student_form %} <br><br>
+        <h3>Parent/Guardian Details</h3>
+        {% bootstrap_form parent_form %} <br><br>
+        <h3>Student and Parent/Guardian Relationship</h3>
+        {% bootstrap_form form %}
+        <br><br>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+      <br>
+  </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#my-form').submit(function(event) {
+      event.preventDefault(); // prevent default form submission
+      $.ajax({
+        url: '{% url "create_student_parent" %}', // URL to submit the forms to
+        type: 'POST',
+        data: $(this).serialize(), // serialize the form data
+        success: function(response) {
+          // handle success response
+        },
+        error: function(xhr, status, error) {
+          // handle error response
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

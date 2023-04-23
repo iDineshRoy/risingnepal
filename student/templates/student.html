@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% load bootstrap5 %}
+{% block content %}
+  <div class="container my-5 z-depth-1">
+    {% for s in student %}
+    {{ s.first_name }} {{ s.last_name }} <br>
+    {% endfor %}
+  </div>
+{% endblock %}
