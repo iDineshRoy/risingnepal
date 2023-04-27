@@ -1,10 +1,12 @@
+import nepali_datetime
+
 from django.db import models
 
 from domain.aggregates.base import BaseModel, BaseJunctionModel
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
-class StudentModel(BaseModel):
+class Student(BaseModel):
     # This contains the personal details about the students
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -13,25 +15,23 @@ class StudentModel(BaseModel):
     address = models.CharField(max_length=200, blank=True, null=True)
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     admitted_on = models.DateField(blank=True, null=True)
-    year_grade_section = models.ManyToManyField(
-        "YearGradeSectionModel", through="YearGradeSectionStudentModel", blank=True
-    )
-    parents = models.ManyToManyField(
-        "ParentModel", through="StudentParentModel", blank=True
-    )
-    attendance = models.ManyToManyField(
-        "AttendanceModel", through="StudentAttendanceModel", blank=True
+    year_grade_section = models.ForeignKey(
+        "YearGradeSection", on_delete=models.CASCADE, blank=True, null=True
     )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+    def get_dob_bs(self):
+        dob_bs = nepali_datetime.date.from_datetime_date(self.dob)
+        return dob_bs
 
     class Meta:
         db_table = "students"
         app_label = "student"
 
 
-class YearGradeSectionModel(BaseModel):
+class YearGradeSection(BaseModel):
     year = models.IntegerField(
         validators=[MinLengthValidator(4), MaxLengthValidator(4)], blank=True, null=True
     )
@@ -51,11 +51,9 @@ class YearGradeSectionModel(BaseModel):
         app_label = "student"
 
 
-class YearGradeSectionStudentModel(BaseJunctionModel):
-    year_grade_section = models.ForeignKey(
-        YearGradeSectionModel, on_delete=models.CASCADE
-    )
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
+class YearGradeSectionStudent(BaseJunctionModel):
+    year_grade_section = models.ForeignKey(YearGradeSection, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ("year_grade_section", "student")
@@ -64,7 +62,7 @@ class YearGradeSectionStudentModel(BaseJunctionModel):
         verbose_name = "year_grade_section_students"
 
 
-class ParentModel(BaseModel):
+class Parent(BaseModel):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone_number = models.CharField(max_length=20)
@@ -80,9 +78,9 @@ class ParentModel(BaseModel):
         verbose_name = "parents"
 
 
-class StudentParentModel(BaseJunctionModel):
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE, to_field="id")
-    parent = models.ForeignKey(ParentModel, on_delete=models.CASCADE, to_field="id")
+class StudentParent(BaseJunctionModel):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field="id")
+    parent = models.ForeignKey(Parent, on_delete=models.CASCADE, to_field="id")
     relationship = models.CharField(max_length=50)
 
     def __str__(self):
@@ -95,12 +93,12 @@ class StudentParentModel(BaseJunctionModel):
         verbose_name = "student_parents"
 
 
-class AttendanceModel(BaseModel):
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
+class Attendance(BaseModel):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date = models.DateField()
     present = models.BooleanField(default=False)
     year_grade_section = models.ForeignKey(
-        YearGradeSectionModel, on_delete=models.CASCADE, blank=True
+        YearGradeSection, on_delete=models.CASCADE, blank=True
     )
 
     def __str__(self):
@@ -110,13 +108,3 @@ class AttendanceModel(BaseModel):
         unique_together = ("student", "date")
         db_table = "attendances"
         app_label = "student"
-
-
-class StudentAttendanceModel(BaseJunctionModel):
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
-    attendance = models.ForeignKey(AttendanceModel, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "student_attendances"
-        app_label = "student"
-        verbose_name = "student_attendances"

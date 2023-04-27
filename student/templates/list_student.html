@@ -7,33 +7,46 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>DOB</th>
+                    <th>DOB (AD)</th>
+                    <th>DOB (BS)</th>
                     <th>Roll Number</th>
                     <th>Address</th>
                     <th>Phone Number</th>
                     <th>Attendance</th>
                     <th>Parent/Guardian</th>
+                    <th>Admitted On (AD)</th>
 
                 </tr>
             </thead>
             <tbody>
-                {% for s in students %}
-                    <tr>
-                        <td>{{ s.first_name }} {{ s.last_name }}</td>
-                        <td>{{ s.student__dob }}</td>
-                        <td>{{ s.roll_number }}</td>
-                        <td>{{ s.address }}</td>
-                        <td>{{ s.phone_number }}</td>
-                        <td>{{ s.attendance.count }}</td>
-                        <td>
-                        {% for parent in s.parents.all %}
-                        {{ parent.first_name }} {{ parent.last_name }} {% for sp in student_parents %} {% if sp.student == s and sp.parent == parent %} ({{ sp.relationship }}) {% endif %} {% endfor %}
+            {% for s in students %}
+                <tr>
+                    <td>{{ s.first_name }} {{ s.last_name }}</td>
+                    <td>{{ s.dob }}</td>
+                    <td>{{ s.dob_bs }}</td>
+                    <td>{{ s.roll_number }}</td>
+                    <td>{{ s.address }}</td>
+                    <td>{{ s.phone_number }}</td>
+                    <td>
+                        {% for attendance in attendances %}
+                        {% if attendance.student == s %}
+                        {{ attendance.count }}
+                        {% endif %}
                         {% endfor %}
+                    </td>
 
-                        </td>
+                    <td>
+                        {% for sp in student_parents %}
+                        {% if sp.student == s %}
+                        {{ sp.parent.first_name }} {{ sp.parent.last_name }} ({{ sp.relationship }}) <br>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
 
-                    </tr>
-                {% endfor %}
+                    <td>{{ s.admitted_on }}</td>
+
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
         </div>

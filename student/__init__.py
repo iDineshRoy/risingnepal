@@ -1,7 +1,7 @@
 # from student.models import (
-#     StudentModel,
-#     ParentModel,
-#     StudentParentModel,
+#     Student,
+#     Parent,
+#     StudentParent,
 #     BillModel,
 #     PaymentModel,
 # )

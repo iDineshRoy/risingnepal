@@ -11,7 +11,7 @@ from student.views import (
 )
 
 from repositories.student import StudentRepository
-from domain.aggregates.student import StudentModel
+from domain.aggregates.student import Student
 from django.urls import path
 
 

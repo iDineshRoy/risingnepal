@@ -1,19 +1,19 @@
 from repositories.base import BaseRepository, BaseJunctionRepository
-from domain.aggregates.student import StudentModel, ParentModel, StudentParentModel
+from domain.aggregates.student import Student, Parent, StudentParent
 
 
 class StudentRepository(BaseRepository):
-    model = StudentModel
+    model = Student
 
 
 class ParentRepository(BaseRepository):
-    model = ParentModel
+    model = Parent
 
 
 class StudentParentRepository(BaseJunctionRepository):
-    junction_model = StudentParentModel
-    left_model = StudentModel
-    right_model = ParentModel
+    junction_model = StudentParent
+    left_model = Student
+    right_model = Parent
 
     def fetch_student_parent(self, **kwargs):
         query = (

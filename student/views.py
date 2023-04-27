@@ -1,17 +1,14 @@
 from typing import Any, Dict
+import nepali_datetime
 
 from django.shortcuts import render
-from repositories.student import StudentParentRepository, StudentRepository
-from django.http import HttpResponse
-from django.views.generic.base import TemplateView
-
-
+from django.db.models import F
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
-from domain.aggregates.student import StudentModel, StudentParentModel, ParentModel
+from domain.aggregates.student import Student, StudentParent, Parent, Attendance
 
-
+from repositories.student import StudentParentRepository, StudentRepository
 from .forms import StudentForm, ParentForm, StudentParentForm
 
 from django.views.generic import (
@@ -24,32 +21,34 @@ from django.views.generic import (
 
 
 class StudentListView(ListView):
-    model = StudentModel
+    model = Student
     template_name = "list_student.html"
     context_object_name = "students"
     paginate_by = 10
     ordering = ["-modified", "-created"]
 
     def get_queryset(self):
-        student = StudentRepository()
-        return student.get_all()
+        students = StudentRepository()
+        students = students.get_all()
+        return students
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # retrieve all books, and prefetch the related authors
-        student_parents = StudentParentModel.objects.prefetch_related("student").all()
+        student_parents = StudentParent.objects.prefetch_related("student").all()
+        attendance = Attendance.objects.prefetch_related("student").all()
+        context["attendances"] = attendance
         context["student_parents"] = student_parents
         return context
 
 
 class StudentDetailView(DetailView):
-    model = StudentModel
+    model = Student
     template_name = "student_detail.html"
     context_object_name = "Student"
 
 
 class StudentCreateView(LoginRequiredMixin, CreateView):
-    model = StudentModel
+    model = Student
     template_name = "student_create.html"
     form_class = StudentForm
     success_url = reverse_lazy("list_student")
@@ -59,7 +58,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
 
 
 class StudentUpdateView(LoginRequiredMixin, UpdateView):
-    model = StudentModel
+    model = Student
     template_name = "student_update.html"
     fields = ["title", "content"]
 
@@ -69,7 +68,7 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
 
 
 # class StudentDeleteView(LoginRequiredMixin, DeleteView):
-#     model = StudentModel
+#     model = Student
 #     template_name = 'student_delete.html'
 #     success_url = reverse_lazy('Student_list')
 
@@ -81,20 +80,20 @@ class StudentUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class StudentParentListView(ListView):
-    model = StudentParentModel
+    model = StudentParent
     template_name = "student_parent_list.html"
     context_object_name = "student_parents"
     paginate_by = 15
 
 
 class StudentParentDetailView(DetailView):
-    model = StudentParentModel
+    model = StudentParent
     template_name = "student_detail.html"
     context_object_name = "students"
 
 
 class StudentParentCreateView(LoginRequiredMixin, CreateView):
-    model = StudentParentModel
+    model = StudentParent
     form_class = StudentParentForm
     template_name = "create_student_parent.html"
     success_url = reverse_lazy("list_student")
@@ -120,12 +119,11 @@ class StudentParentCreateView(LoginRequiredMixin, CreateView):
         context = self.get_context_data(
             form=form, student_form=student_form, parent_form=parent_form
         )
-
         return self.render_to_response(context)
 
 
 class StudentParentAssignView(LoginRequiredMixin, CreateView):
-    model = StudentParentModel
+    model = StudentParent
     template_name = "student_create.html"
     fields = ["student", "parent", "relationship"]
     success_url = reverse_lazy("list_student")
@@ -135,7 +133,7 @@ class StudentParentAssignView(LoginRequiredMixin, CreateView):
 
 
 class StudentParentUpdateView(LoginRequiredMixin, UpdateView):
-    model = StudentParentModel
+    model = StudentParent
     template_name = "student_update.html"
     fields = ["title", "content"]
 
@@ -145,7 +143,7 @@ class StudentParentUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class ParentCreateView(LoginRequiredMixin, CreateView):
-    model = ParentModel
+    model = Parent
     template_name = "student_create.html"
     fields = ["first_name", "last_name", "phone_number", "email", "address"]
     success_url = reverse_lazy("student_list")

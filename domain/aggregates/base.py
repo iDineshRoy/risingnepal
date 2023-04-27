@@ -7,6 +7,7 @@ class BaseModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, null=True)
     modified = models.DateTimeField(auto_now=True)
     version = models.PositiveIntegerField(default=1)
+    active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
@@ -17,6 +18,7 @@ class BaseJunctionModel(models.Model):
     created = models.DateTimeField(auto_now_add=True, null=True)
     modified = models.DateTimeField(auto_now=True)
     version = models.PositiveIntegerField(default=1)
+    active = models.BooleanField(default=True)
 
     class Meta:
         abstract = True

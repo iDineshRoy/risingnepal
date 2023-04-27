@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load bootstrap5 %}
+{% block content %}
+<div class="container">
+    <br>
+    <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <h2>Login</h2>
+        <form method="post" action="">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <p>Not a member?
+            <a href="{% url 'create_user' %}">Register</a>
+        </p>
+        <p>Forgot Password?
+            <a href="{% url 'reset_password' %}">Reset Password</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from domain.aggregates.student import StudentModel
+from domain.aggregates.student import Student
 
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StudentModel
+        model = Student
         fields = "__all__"

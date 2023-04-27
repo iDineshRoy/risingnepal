@@ -1,12 +1,12 @@
 from rest_framework import viewsets
 from .serializers import StudentSerializer
-from domain.aggregates.student import StudentModel
+from domain.aggregates.student import Student
 from repositories.student import StudentRepository
 
 
 class StudentViewSet(viewsets.ModelViewSet):
     serializer_class = StudentSerializer
-    queryset = StudentModel.objects.all()
+    queryset = Student.objects.all()
     repository_class = StudentRepository
 
     def get_queryset(self):
