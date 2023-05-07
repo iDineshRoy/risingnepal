@@ -1,7 +1,8 @@
+from typing import Any
 from django.db import models
 from django import forms
 
-from domain.aggregates.student import Student, StudentParent, Parent
+from domain.aggregates import Student, StudentParent, Parent, Bill
 import nepali_datetime
 
 
@@ -15,10 +16,12 @@ class StudentForm(forms.ModelForm):
             "parents",
             "student_parent",
             "active",
+            "dob",
+            "admitted_on",
         ]
 
     def clean_dob(self):
-        dob_bs = self.cleaned_data["dob"]
+        dob_bs = self.cleaned_data["dob_bs"]
         if dob_bs is not None:
             dob_bs = nepali_datetime.date(
                 year=dob_bs.year, month=dob_bs.month, day=dob_bs.day
@@ -27,7 +30,7 @@ class StudentForm(forms.ModelForm):
             return dob_ad
 
     def clean_admitted_on(self):
-        admitted_on_bs = self.cleaned_data["admitted_on"]
+        admitted_on_bs = self.cleaned_data["admitted_on_bs"]
         if admitted_on_bs is not None:
             admitted_on_bs = nepali_datetime.date(
                 year=admitted_on_bs.year,
@@ -36,6 +39,12 @@ class StudentForm(forms.ModelForm):
             )
             admitted_on_ad = admitted_on_bs.to_datetime_date()
             return admitted_on_ad
+
+    def save(self, commit: bool = True):
+        instance = super().save(commit=False)
+        instance.dob = instance.dob
+        instance.admitted_on = instance.admitted_on
+        return super().save(commit)
 
 
 class ParentForm(forms.ModelForm):
@@ -47,4 +56,4 @@ class ParentForm(forms.ModelForm):
 class StudentParentForm(forms.ModelForm):
     class Meta:
         model = StudentParent
-        fields = ["relationship"]
+        fields = ["student", "parent", "relationship"]

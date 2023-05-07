@@ -2,56 +2,25 @@
 
 {% block content %}
 <div class="container my-5 z-depth-1">
-    <a href="{% url 'create_student' %}" class="btn btn-success btn-sm">Add Student</a>
-
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>DOB (AD)</th>
-                    <th>DOB (BS)</th>
-                    <th>Roll Number</th>
-                    <th>Address</th>
-                    <th>Phone Number</th>
-                    <th>Attendance</th>
-                    <th>Parent/Guardian</th>
-                    <th>Admitted On (AD)</th>
-                    <th>Admitted On (BS)</th>
-                    <th>Update</th>
-                    <th>Delete</th>
+                    <th>Year/Class/Section</th>
+
+                    <th>Student</th>
 
                 </tr>
             </thead>
             <tbody>
-                {% for s in students %}
+                {% for o in objects %}
                 <tr>
-                    <td>{{ s.first_name }} {{ s.last_name }}</td>
-                    <td>{{ s.dob }}</td>
-                    <td>{{ s.dob_bs|date:'Y-m-d' }}</td>
-                    <td>{{ s.roll_number }}</td>
-                    <td>{{ s.address }}</td>
-                    <td>{{ s.phone_number }}</td>
-                    <td>
-                        {% for attendance in attendances %}
-                        {% if attendance.student == s %}
-                        {{ attendance.count }}
-                        {% endif %}
-                        {% endfor %}
-                    </td>
-
-                    <td>
-                        {% for sp in student_parents %}
-                        {% if sp.student == s %}
-                        {{ sp.parent.first_name }} {{ sp.parent.last_name }} ({{ sp.relationship }}) <br>
-                        {% endif %}
-                        {% endfor %}
-                    </td>
-
-                    <td>{{ s.admitted_on }}</td>
-                    <td>{{ s.admitted_on_bs|date:'Y-m-d' }}</td>
-                    <td><a href="{% url 'update_student' s.pk %}" class="btn btn-primary btn-sm">Edit</a></td>
-                    <td><a href="{% url 'delete_student' s.pk %}" class="btn btn-danger btn-sm">Delete</a></td>
+                    <td>{{ o.year_grade_section }}</td>
+                    <td>{{ o.student }}</td>
+                    <td><a href="{% url 'update_yeargradesectionstudent' o.pk %}"
+                            class="btn btn-primary btn-sm">Edit</a></td>
+                    <td><a href="{% url 'delete_yeargradesectionstudent' o.pk %}"
+                            class="btn btn-danger btn-sm">Delete</a></td>
 
                 </tr>
                 {% endfor %}

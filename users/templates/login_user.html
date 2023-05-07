@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "dashboard.html" %}
 
 {% load bootstrap5 %}
 {% block content %}
@@ -12,7 +12,7 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
         <p>Not a member?
-            <a href="{% url 'create_user' %}">Register</a>
+            <a href="{% url 'register' %}">Register</a>
         </p>
         <p>Forgot Password?
             <a href="{% url 'reset_password' %}">Reset Password</a>

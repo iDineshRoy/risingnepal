@@ -2,37 +2,46 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from student.views import (
-    StudentCreateView,
+    StudentView,
     StudentListView,
-    StudentParentCreateView,
-    StudentParentAssignView,
-    StudentParentListView,
-    ParentCreateView,
+    ParentView,
+    StudentParentView,
+    YearGradeSectionView,
+    YearGradeSectionStudentView,
 )
 
 from repositories.student import StudentRepository
-from domain.aggregates.student import Student
-from django.urls import path
+from domain.aggregates import Student, Bill
+from django.urls import path, reverse_lazy
+
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+
+from repositories.forms import BillForm
+from student.forms import StudentForm
+
+from application.base import BaseView
+
+# ---------------------------------------------------- #
 
 
-urlpatterns = [
-    # path("/", include(student_router), name="student-routes"),
-    path("list_student/", StudentListView.as_view(), name="list_student"),
-    path("create_student/", StudentCreateView.as_view(), name="create_student"),
-    path(
-        "assign_student_parent/",
-        StudentParentAssignView.as_view(),
-        name="assign_student_parent",
-    ),
-    path(
-        "list_student_parent/",
-        StudentParentListView.as_view(),
-        name="list_student_parent",
-    ),
-    path("create_parent/", ParentCreateView.as_view(), name="create_parent"),
-    path(
-        "create_student_parent/",
-        StudentParentCreateView.as_view(),
-        name="create_student_parent",
-    ),
-]
+sv = StudentView()
+pv = ParentView()
+spv = StudentParentView()
+ygs = YearGradeSectionView()
+ygss = YearGradeSectionStudentView()
+urlpatterns = (
+    [
+        path("list_students/", StudentListView.as_view(), name="list_students"),
+    ]
+    + sv.url_patterns()
+    + pv.url_patterns()
+    + spv.url_patterns()
+    + ygs.url_patterns()
+    + ygss.url_patterns()
+)

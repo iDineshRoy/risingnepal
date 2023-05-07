@@ -6,10 +6,22 @@ from django.db.models import F
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
-from domain.aggregates.student import Student, StudentParent, Parent, Attendance
+from domain.aggregates import (
+    Student,
+    StudentParent,
+    Parent,
+    Attendance,
+    YearGradeSection,
+    YearGradeSectionStudent,
+)
 
-from repositories.student import StudentParentRepository, StudentRepository
+from repositories.student import (
+    StudentParentRepository,
+    StudentRepository,
+    ParentRepository,
+)
 from .forms import StudentForm, ParentForm, StudentParentForm
+from repositories.forms import YearGradeSectionForm, YearGradeSectionStudentForm
 
 from django.views.generic import (
     ListView,
@@ -18,11 +30,56 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from application.base import BaseView
+
+
+# ---------------------------------------------------- #
+
+
+class StudentView(BaseView):
+    model = Student
+    form_class = StudentForm
+    context_object_name = "students"
+    student_parents = StudentParent.objects.prefetch_related("student").all()
+    yeargradesectionstudent = YearGradeSectionStudent.objects.all()
+    more_context = {
+        "student_parents": student_parents,
+        "yeargradesectionstudent": yeargradesectionstudent,
+    }
+    template_name = "list_students.html"
+
+
+class ParentView(BaseView):
+    model = Parent
+    form_class = ParentForm
+    context_object_name = "students"
+    template_name = "list_parent.html"
+
+
+class StudentParentView(BaseView):
+    model = StudentParent
+    form_class = StudentParentForm
+    context_object_name = "students"
+    template_name = "list_studentparent.html"
+
+
+class YearGradeSectionView(BaseView):
+    model = YearGradeSection
+    form_class = YearGradeSectionForm
+    context_object_name = "objects"
+    template_name = "list_yeargradesection.html"
+
+
+class YearGradeSectionStudentView(BaseView):
+    model = YearGradeSectionStudent
+    form_class = YearGradeSectionStudentForm
+    context_object_name = "objects"
+    template_name = "list_yeargradesectionstudent.html"
 
 
 class StudentListView(ListView):
     model = Student
-    template_name = "list_student.html"
+    template_name = "list_students.html"
     context_object_name = "students"
     paginate_by = 10
     ordering = ["-modified", "-created"]
@@ -36,8 +93,10 @@ class StudentListView(ListView):
         context = super().get_context_data(**kwargs)
         student_parents = StudentParent.objects.prefetch_related("student").all()
         attendance = Attendance.objects.prefetch_related("student").all()
+        yeargradesectionstudent = YearGradeSectionStudent.objects.all()
         context["attendances"] = attendance
         context["student_parents"] = student_parents
+        context["yeargradesectionstudent"] = yeargradesectionstudent
         return context
 
 
@@ -51,7 +110,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
     template_name = "student_create.html"
     form_class = StudentForm
-    success_url = reverse_lazy("list_student")
+    success_url = reverse_lazy("list_students")
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -96,7 +155,7 @@ class StudentParentCreateView(LoginRequiredMixin, CreateView):
     model = StudentParent
     form_class = StudentParentForm
     template_name = "create_student_parent.html"
-    success_url = reverse_lazy("list_student")
+    success_url = reverse_lazy("list_students")
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -126,7 +185,7 @@ class StudentParentAssignView(LoginRequiredMixin, CreateView):
     model = StudentParent
     template_name = "student_create.html"
     fields = ["student", "parent", "relationship"]
-    success_url = reverse_lazy("list_student")
+    success_url = reverse_lazy("list_students")
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -150,3 +209,24 @@ class ParentCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         return super().form_valid(form)
+
+
+class ParentListView(LoginRequiredMixin, CreateView):
+    model = Parent
+    template_name = "list_student.html"
+    context_object_name = "parents"
+    paginate_by = 10
+    ordering = ["-modified", "-created"]
+
+    def get_queryset(self):
+        students = ParentRepository()
+        students = students.get_all()
+        return students
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student_parents = StudentParent.objects.prefetch_related("student").all()
+        attendance = Attendance.objects.prefetch_related("student").all()
+        context["attendances"] = attendance
+        context["student_parents"] = student_parents
+        return context

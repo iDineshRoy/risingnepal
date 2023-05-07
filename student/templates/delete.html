@@ -1,0 +1,17 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+<div class="container my-5 z-depth-1">
+    <form method="post" action="" enctype="multipart/form-data" class="col-md-10">
+        {% csrf_token %}
+
+        <p>Are you sure you want to delete <strong>{{ object }}</strong>?</p>
+        {{ form }}
+        <br>
+
+        <button type="submit" class="btn btn-danger">Confirm</button>
+        <a href="{{ view.get_success_url }}" class="btn btn-secondary">Cancel</a>
+    </form>
+
+</div>
+{% endblock %}

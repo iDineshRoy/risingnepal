@@ -45,6 +45,9 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'contact' %}">Contact</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'list_students' %}">Dashboard</a>
+            </li>
           </ul>
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             {% if user.is_authenticated %}
@@ -54,19 +57,19 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout_user' %}">
+              <a class="nav-link" href="{% url 'logout' %}">
                 <i class="bi bi-person"></i> Logout
               </a>
             </li>
             {% else %}
 
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'login_user' %}">
+              <a class="nav-link" href="{% url 'login' %}">
                 <i class="bi bi-person"></i> Login
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'create_user' %}">
+              <a class="nav-link" href="{% url 'register' %}">
                 <i class="bi bi-person-plus"></i> Register
               </a>
             </li>

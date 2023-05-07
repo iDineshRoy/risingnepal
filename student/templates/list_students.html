@@ -9,14 +9,13 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>DOB (AD)</th>
-                    <th>DOB (BS)</th>
+                    <th>DateOfBirth</th>
+                    <th>Class</th>
                     <th>Roll Number</th>
                     <th>Address</th>
                     <th>Phone Number</th>
                     <th>Attendance</th>
                     <th>Parent/Guardian</th>
-                    <th>Admitted On (AD)</th>
                     <th>Admitted On (BS)</th>
                     <th>Update</th>
                     <th>Delete</th>
@@ -27,8 +26,16 @@
                 {% for s in students %}
                 <tr>
                     <td>{{ s.first_name }} {{ s.last_name }}</td>
-                    <td>{{ s.dob }}</td>
                     <td>{{ s.dob_bs|date:'Y-m-d' }}</td>
+
+                    <td>{% for g in yeargradesectionstudent %}
+                        {% if g.student == s %}
+                        {{ g.year_grade_section.grade }}
+                        <span class="badge text-bg-info">{{ g.year_grade_section.year }}</span>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+
                     <td>{{ s.roll_number }}</td>
                     <td>{{ s.address }}</td>
                     <td>{{ s.phone_number }}</td>
@@ -43,12 +50,12 @@
                     <td>
                         {% for sp in student_parents %}
                         {% if sp.student == s %}
-                        {{ sp.parent.first_name }} {{ sp.parent.last_name }} ({{ sp.relationship }}) <br>
+                        {{ sp.parent.first_name }} {{ sp.parent.last_name }}
+                        <span class="badge text-bg-info">{{ sp.relationship }}</span> <br>
                         {% endif %}
                         {% endfor %}
                     </td>
 
-                    <td>{{ s.admitted_on }}</td>
                     <td>{{ s.admitted_on_bs|date:'Y-m-d' }}</td>
                     <td><a href="{% url 'update_student' s.pk %}" class="btn btn-primary btn-sm">Edit</a></td>
                     <td><a href="{% url 'delete_student' s.pk %}" class="btn btn-danger btn-sm">Delete</a></td>

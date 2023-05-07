@@ -3,7 +3,10 @@ import nepali_datetime
 from django.db import models
 
 from domain.aggregates.base import BaseModel, BaseJunctionModel
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.core.validators import (
+    MinValueValidator,
+    MaxValueValidator,
+)
 
 
 class Student(BaseModel):
@@ -11,17 +14,17 @@ class Student(BaseModel):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     dob = models.DateField(blank=True, null=True)
+    dob_bs = models.DateField(blank=True, null=True)
     roll_number = models.IntegerField(blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     admitted_on = models.DateField(blank=True, null=True)
-    year_grade_section = models.ForeignKey(
-        "YearGradeSection", on_delete=models.CASCADE, blank=True, null=True
-    )
+    admitted_on_bs = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    # currently does nothing
     def get_dob_bs(self):
         dob_bs = nepali_datetime.date.from_datetime_date(self.dob)
         return dob_bs
@@ -33,17 +36,21 @@ class Student(BaseModel):
 
 class YearGradeSection(BaseModel):
     year = models.IntegerField(
-        validators=[MinLengthValidator(4), MaxLengthValidator(4)], blank=True, null=True
+        validators=[MinValueValidator(2000), MaxValueValidator(2999)],
+        blank=True,
+        null=True,
     )
     year_ad = models.IntegerField(
-        validators=[MinLengthValidator(4), MaxLengthValidator(4)], blank=True, null=True
+        validators=[MinValueValidator(2000), MaxValueValidator(2999)],
+        blank=True,
+        null=True,
     )
     grade = models.CharField(max_length=20, blank=True, null=True)
     section = models.CharField(max_length=20, blank=True, null=True)
     description = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.year} {self.grade} {self.section}"
+        return f"Year: {self.year} B.S., Class: {self.grade}, Section: {self.section}"
 
     class Meta:
         unique_together = ("year", "grade", "section")

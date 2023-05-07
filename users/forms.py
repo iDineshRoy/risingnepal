@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-
+from django.shortcuts import redirect
 from users.models import CustomUser
 
 
@@ -10,8 +10,8 @@ class UserRegistrationForm(forms.ModelForm):
             ("admin", "Admin"),
             ("manager", "Manager"),
             ("operator", "Operator"),
-            ("staff", "Staff"),
             ("teacher", "Teacher"),
+            ("student", "Student"),
         )
     )
 
@@ -42,12 +42,4 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class UserLoginForm(AuthenticationForm):
-    user_type = forms.ChoiceField(
-        choices=(
-            ("admin", "Admin"),
-            ("manager", "Manager"),
-            ("operator", "Operator"),
-            ("staff", "Staff"),
-            ("teacher", "Teacher"),
-        )
-    )
+    pass

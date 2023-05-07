@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+{% load bootstrap5 %}
+<html lang="en" data-bs-theme="light">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        {% load static %}
+        <!-- Custom CSS -->
+
+    </head>
+
+    <body class="wrapper">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgb(196, 196, 255);">
+            <div class=" container-fluid">
+                <a class="navbar-brand" href="{% url 'list_students' %}">Home</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'list_students' %}">Students</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Tables</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Settings</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex ms-auto">
+                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="dark-mode-toggle">
+                        <label class="form-check-label text-light" for="dark-mode-toggle">Dark Mode</label>
+                    </div>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown ms-3">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+
+                            {% if user.first_name %} {{ user.first_name }} {% else %}
+                            {{ user.username }} {% endif %}
+
+                            <small>{% if user.is_admin %} Admin {% elif user.is_teacher %}
+                                Teacher {% elif user.is_student %} Student {% endif %}</small>
+
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" href="#">Settings</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+
+                        </ul>
+                    </div>
+                    {% else %}
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+
+                        <li><a class="dropdown-item" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'register' %}">Register</a>
+                        </li>
+                    </ul>
+                    {% endif %}
+
+                </div>
+            </div>
+        </nav>
+
+        <!-- Left-hand Navigation Panel -->
+        <div class="container-fluid">
+            <div class="row">
+                <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                    <div class="position-sticky pt-3">
+                        <ul class="nav flex-column">
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Students
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item active" href="{% url 'create_student' %}">Add</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'list_student' %}">Show All</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'create_studentparent' %}">
+                                            Assign Student Guardian</a></li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Parents/Guardians
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item active" href="{% url 'create_parent' %}">Add</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'list_parent' %}">Show All</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'create_studentparent' %}">
+                                            Assign Student Guardian</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'list_studentparent' %}">
+                                            Show Student Guardians</a></li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Classes
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item active"
+                                            href="{% url 'create_yeargradesection' %}">Add</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'list_yeargradesection' %}">Show All</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'create_yeargradesectionstudent' %}">
+                                            Add Student to Class</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'list_yeargradesectionstudent' %}">
+                                            List Students in Classes</a></li>
+                                </ul>
+                            </div>
+
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- Main Content -->
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+                    <div
+                        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2"> {% if form %}{{ model_name }}{% else %}Dashboard{% endif %}</h1>
+                    </div>
+                    {% block content %}
+                    {% endblock %}
+                </main>
+
+                <footer class="fixed-bottom bg-light mt-5">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <p>&copy; 2023 - Rising Nepal School</p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <!-- Bootstrap JavaScript -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Dark mode toggle script -->
+        <script>
+            const toggleSwitch = document.querySelector('#dark-mode-toggle');
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                if (currentTheme === 'dark') {
+                    toggleSwitch.checked = true;
+                }
+            }
+            function switchTheme(e) {
+                const theme = e.target.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+            }
+            toggleSwitch.addEventListener('change', switchTheme);
+        </script>
+    </body>
+
+</html>

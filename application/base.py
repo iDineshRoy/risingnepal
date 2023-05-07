@@ -1,118 +1,91 @@
+from typing import Any, Type
+from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse
+
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.db import models
+from django import forms
 from django.urls import path
-from django.http import JsonResponse
-
-from django.urls import path
 
 
-class BaseRouter:
-    model = None
-    base_name = None
-    registry = []
+class BaseView:
+    model: Type[models.Model]
+    form_class: Type[forms.ModelForm]
+    context_object_name = None
+    paginate_by = 10
+    template_name = None
+    success_url = None
+    more_context: dict = {}
 
-    @classmethod
-    def register_viewset(cls, viewset):
-        cls.registry.append(viewset)
+    def __init__(self, **kwargs):
+        self.model = kwargs.pop("model", self.model)
+        self.template_name = kwargs.pop("template_name", self.template_name)
+        self.form_class = kwargs.pop("form_class", self.form_class)
+        self.success_url = kwargs.pop("success_url", self.success_url)
+        self.context_object_name = kwargs.pop(
+            "context_object_name", self.context_object_name
+        )
+        self.more_context = kwargs.pop("more_context", self.more_context)
+        super().__init__(**kwargs)
 
-    @classmethod
-    def get_urls(cls):
-        urls = []
-        for viewset in cls.registry:
-            urls.extend(cls.get_urls_for_viewset(viewset))
-        return urls
-
-    @classmethod
-    def get_urls_for_viewset(cls, viewset):
-        base_name = viewset.base_name or viewset.get_name()
-        model_name = viewset.model.__name__.lower()
-
-        urlpatterns = [
-            url(
-                r"^{}/$".format(model_name),
-                viewset.as_view(
-                    {
-                        "get": "list",
-                        "post": "create",
-                    }
-                ),
-                name="{}_list".format(base_name),
+    def url_patterns(self):
+        all_paths = []
+        create = path(
+            f"create_{str(self.model.__name__).lower()}/",
+            CreateView.as_view(
+                model=self.model,
+                form_class=self.form_class,
+                template_name="create.html",
+                success_url=reverse_lazy(f"list_{str(self.model.__name__).lower()}"),
             ),
-            url(
-                r"^{}/(?P<pk>\d+)/$".format(model_name),
-                viewset.as_view(
-                    {
-                        "get": "retrieve",
-                        "put": "update",
-                        "patch": "partial_update",
-                        "delete": "destroy",
-                    }
-                ),
-                name="{}_detail".format(base_name),
+            name=f"create_{str(self.model.__name__).lower()}",
+        )
+
+        update = path(
+            f"update_{str(self.model.__name__).lower()}/<int:pk>",
+            UpdateView.as_view(
+                model=self.model,
+                form_class=self.form_class,
+                template_name="create.html",
+                success_url=reverse_lazy(f"list_{str(self.model.__name__).lower()}"),
             ),
-        ]
+            name=f"update_{str(self.model.__name__).lower()}",
+        )
 
-        return urlpatterns
+        class ListObjects(ListView):
+            model = self.model
+            more_context = self.more_context
 
-    def __init__(self):
-        self.base_name = self.base_name or self.model.__name__.lower()
+            def get_context_data(self, **kwargs):
+                context = super().get_context_data(**kwargs)
+                context.update(self.more_context)
+                return context
 
-    # def get_urls(self):
-    #     urlpatterns = [
-    #         path("", self.list_view),
-    #         path("<int:pk>/", self.detail_view),
-    #     ]
-    #     return urlpatterns
+        list = path(
+            f"list_{str(self.model.__name__).lower()}/",
+            ListObjects.as_view(
+                model=self.model,
+                context_object_name=self.context_object_name,
+                paginate_by=10,
+                ordering=["-modified", "-created"],
+                template_name=self.template_name,
+            ),
+            name=f"list_{str(self.model.__name__).lower()}",
+        )
 
-    def list_view(self, request):
-        queryset = self.model.objects.all()
-        data = self.get_serializer(queryset, many=True).data
-        return JsonResponse(data, safe=False)
+        delete = path(
+            f"delete_{str(self.model.__name__).lower()}/<int:pk>",
+            DeleteView.as_view(
+                model=self.model,
+                template_name="delete.html",
+                success_url=reverse_lazy(f"list_{str(self.model.__name__).lower()}"),
+            ),
+            name=f"delete_{str(self.model.__name__).lower()}",
+        )
 
-    def detail_view(self, request, pk):
-        obj = self.model.objects.get(pk=pk)
-        data = self.get_serializer(obj).data
-        return JsonResponse(data)
-
-    def get_serializer(self, *args, **kwargs):
-        return self.serializer_class(*args, **kwargs)
-
-
-class JunctionRouter:
-    junction_model = None
-    left_model = None
-    right_model = None
-    base_name = None
-
-    def __init__(self):
-        self.base_name = self.base_name or self.junction_model.__name__.lower()
-
-    def get_urls(self):
-        urlpatterns = [
-            path("", self.list_view),
-            path("<int:pk>/", self.detail_view),
-            path("<int:pk>/left/", self.left_view),
-            path("<int:pk>/right/", self.right_view),
-        ]
-        return urlpatterns
-
-    def list_view(self, request):
-        queryset = self.junction_model.objects.all()
-        data = self.get_serializer(queryset, many=True).data
-        return JsonResponse(data, safe=False)
-
-    def detail_view(self, request, pk):
-        obj = self.junction_model.objects.get(pk=pk)
-        data = self.get_serializer(obj).data
-        return JsonResponse(data)
-
-    def left_view(self, request, pk):
-        obj = self.junction_model.objects.get(pk=pk)
-        data = self.get_serializer(obj.left).data
-        return JsonResponse(data)
-
-    def right_view(self, request, pk):
-        obj = self.junction_model.objects.get(pk=pk)
-        data = self.get_serializer(obj.right).data
-        return JsonResponse(data)
-
-    def get_serializer(self, *args, **kwargs):
-        return self.serializer_class(*args, **kwargs)
+        all_paths.append(create)
+        all_paths.append(update)
+        all_paths.append(list)
+        all_paths.append(delete)
+        return all_paths

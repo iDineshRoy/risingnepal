@@ -3,7 +3,7 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
 
 from domain.aggregates.base import BaseModel, BaseJunctionModel
-from domain.aggregates.student import Student
+from domain.aggregates import Student, YearGradeSection
 from decimal import Decimal
 
 
@@ -20,9 +20,7 @@ class Fee(BaseModel):
     fee_type = models.CharField(max_length=40, choices=FEE_CHOICES)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
     description = models.TextField()
-    year_grade_section = models.ManyToManyField(
-        "YearGradeSection", through="YearGradeSectionStudent"
-    )
+    year_grade_section = models.ForeignKey(YearGradeSection, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.fee_type}: {self.amount}"
@@ -80,5 +78,5 @@ class Bill(BaseModel):
         app_label = "student"
 
 
-class Receipt(BaseModel):
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+# class Receipt(BaseModel):
+#     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
