@@ -7,26 +7,30 @@
         {{ error }}
     </div>
     {% endfor %}
-    <a href="{% url 'create_studentparent' %}" class="btn btn-success btn-sm">Add Student to Guardian</a>
+    <a href="{% url 'create_feestudent' %}" class="btn btn-success btn-sm">Add Fee to Student</a>
 
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Student</th>
-                    <th>Guardian</th>
+                    <th>Date</th>
+                    <th>Fee</th>
+                    <th>Year/Grade/Section</th>
+                    <th>Discount</th>
                     <th>Update</th>
                     <th>Delete</th>
 
                 </tr>
             </thead>
             <tbody>
-                {% for s in students %}
+                {% for s in objects %}
                 <tr>
-                    <td>{{ s.student.first_name }} {{ s.student.last_name }}</td>
-                    <td>{{ s.parent.first_name }} {{ s.parent.last_name }}</td>
-                    <td><a href="{% url 'update_studentparent' s.pk %}" class="btn btn-primary btn-sm">Edit</a></td>
-                    <td><a href="{% url 'delete_studentparent' s.pk %}" class="btn btn-danger btn-sm">Delete</a></td>
+                    <td>{{ s.fee_date }}</td>
+                    <td>{{ s.fee }}</td>
+                    <td>{{ s.year_grade_section_student }}</td>
+                    <td>{{ s.discount }}</td>
+                    <td><a href="{% url 'update_feestudent' s.pk %}" class="btn btn-primary btn-sm">Edit</a></td>
+                    <td><a href="{% url 'delete_feestudent' s.pk %}" class="btn btn-danger btn-sm">Delete</a></td>
 
                 </tr>
                 {% endfor %}

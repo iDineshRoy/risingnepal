@@ -22,7 +22,7 @@ from django.views.generic import (
     DeleteView,
 )
 
-from repositories.forms import BillForm
+from repositories.forms import FeeForm
 from student.forms import StudentForm
 
 from application.base import BaseView

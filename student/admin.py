@@ -5,11 +5,13 @@ from domain.aggregates.student import (
     Parent,
     StudentParent,
 )
-from .models import BillModel, PaymentModel
+from domain.aggregates import Fee, FeeStudent
+
+# from .models import BillModel, PaymentModel
 
 
 admin.site.register(Student)
 admin.site.register(Parent)
 admin.site.register(StudentParent)
-admin.site.register(BillModel)
-admin.site.register(PaymentModel)
+admin.site.register(Fee)
+admin.site.register(FeeStudent)

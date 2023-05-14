@@ -2,31 +2,30 @@
 
 {% block content %}
 <div class="container my-5 z-depth-1">
-    {% for error in form.errors %}
-    <div class="alert alert-danger">
-        {{ error }}
-    </div>
-    {% endfor %}
-    <a href="{% url 'create_studentparent' %}" class="btn btn-success btn-sm">Add Student to Guardian</a>
+    <a href="{% url 'create_fee' %}" class="btn btn-success btn-sm">Add Fee</a>
 
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Student</th>
-                    <th>Guardian</th>
+                    <th>Fee Type</th>
+                    <th>Amount (Rs.)</th>
+                    <th>Description</th>
+                    <th>Year/Grade/Section</th>
                     <th>Update</th>
                     <th>Delete</th>
 
                 </tr>
             </thead>
             <tbody>
-                {% for s in students %}
+                {% for s in objects %}
                 <tr>
-                    <td>{{ s.student.first_name }} {{ s.student.last_name }}</td>
-                    <td>{{ s.parent.first_name }} {{ s.parent.last_name }}</td>
-                    <td><a href="{% url 'update_studentparent' s.pk %}" class="btn btn-primary btn-sm">Edit</a></td>
-                    <td><a href="{% url 'delete_studentparent' s.pk %}" class="btn btn-danger btn-sm">Delete</a></td>
+                    <td>{{ s.fee_type }}</td>
+                    <td>{{ s.amount }}</td>
+                    <td>{{ s.description }}</td>
+                    <td>{{ s.year_grade_section }}</td>
+                    <td><a href="{% url 'update_fee' s.pk %}" class="btn btn-primary btn-sm">Edit</a></td>
+                    <td><a href="{% url 'delete_fee' s.pk %}" class="btn btn-danger btn-sm">Delete</a></td>
 
                 </tr>
                 {% endfor %}

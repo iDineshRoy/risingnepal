@@ -1,2 +1,2 @@
 from domain.aggregates.base import BaseModel, BaseJunctionModel
-from .forms import BillForm, YearGradeSectionForm
+from .forms import FeeForm, YearGradeSectionForm

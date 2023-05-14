@@ -142,6 +142,38 @@
                                             List Students in Classes</a></li>
                                 </ul>
                             </div>
+                            <br>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Fees
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item active" href="{% url 'create_fee' %}">Add</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'list_fee' %}">Show All</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <br>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Fees for Student
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li><a class="dropdown-item active" href="{% url 'create_feestudent' %}">Add</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'list_feestudent' %}">Show All</a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                </ul>
+                            </div>
 
                         </ul>
                     </div>

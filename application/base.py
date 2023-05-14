@@ -17,12 +17,14 @@ class BaseView:
     template_name = None
     success_url = None
     more_context: dict = {}
+    ordering: list | None = ["-modified", "created"]
 
     def __init__(self, **kwargs):
         self.model = kwargs.pop("model", self.model)
         self.template_name = kwargs.pop("template_name", self.template_name)
         self.form_class = kwargs.pop("form_class", self.form_class)
         self.success_url = kwargs.pop("success_url", self.success_url)
+        self.ordering = kwargs.pop("ordering", self.ordering)
         self.context_object_name = kwargs.pop(
             "context_object_name", self.context_object_name
         )
@@ -68,7 +70,7 @@ class BaseView:
                 model=self.model,
                 context_object_name=self.context_object_name,
                 paginate_by=10,
-                ordering=["-modified", "-created"],
+                ordering=self.ordering,
                 template_name=self.template_name,
             ),
             name=f"list_{str(self.model.__name__).lower()}",

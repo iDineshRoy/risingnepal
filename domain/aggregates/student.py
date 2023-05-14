@@ -50,7 +50,7 @@ class YearGradeSection(BaseModel):
     description = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return f"Year: {self.year} B.S., Class: {self.grade}, Section: {self.section}"
+        return f"Year: {self.year} B.S., Class: {self.grade}, Section: {self.section if self.section is not None else ''}"
 
     class Meta:
         unique_together = ("year", "grade", "section")
@@ -61,6 +61,9 @@ class YearGradeSection(BaseModel):
 class YearGradeSectionStudent(BaseJunctionModel):
     year_grade_section = models.ForeignKey(YearGradeSection, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"{self.student.first_name} {self.student.last_name}: {self.year_grade_section}"
 
     class Meta:
         unique_together = ("year_grade_section", "student")

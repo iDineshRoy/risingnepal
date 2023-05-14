@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "result",
+    "nepali_datetime_field",
     "blog",
     "ckeditor",
     "taggit",
@@ -76,7 +77,7 @@ ROOT_URLCONF = "risingnepal.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["application/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
