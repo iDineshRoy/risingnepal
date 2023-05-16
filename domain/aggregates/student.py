@@ -1,5 +1,6 @@
 import nepali_datetime
-
+from nepali_datetime import date
+from nepali_datetime_field.models import NepaliDateField
 from django.db import models
 
 from domain.aggregates.base import BaseModel, BaseJunctionModel
@@ -14,20 +15,15 @@ class Student(BaseModel):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     dob = models.DateField(blank=True, null=True)
-    dob_bs = models.DateField(blank=True, null=True)
+    dob_bs = NepaliDateField(blank=True, null=True)
     roll_number = models.IntegerField(blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     phone_number = models.CharField(max_length=10, blank=True, null=True)
     admitted_on = models.DateField(blank=True, null=True)
-    admitted_on_bs = models.DateField(blank=True, null=True)
+    admitted_on_bs = NepaliDateField(default=str(date.today()))
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-
-    # currently does nothing
-    def get_dob_bs(self):
-        dob_bs = nepali_datetime.date.from_datetime_date(self.dob)
-        return dob_bs
 
     class Meta:
         db_table = "students"

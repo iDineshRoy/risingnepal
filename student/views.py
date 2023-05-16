@@ -40,13 +40,13 @@ class StudentView(BaseView):
     model = Student
     form_class = StudentForm
     context_object_name = "students"
-    student_parents = StudentParent.objects.prefetch_related("student").all()
+    student_parents = StudentParent.objects.all()
     yeargradesectionstudent = YearGradeSectionStudent.objects.all()
     more_context = {
         "student_parents": student_parents,
         "yeargradesectionstudent": yeargradesectionstudent,
     }
-    template_name = "list_students.html"
+    template_name = "list_student.html"
 
 
 class ParentView(BaseView):

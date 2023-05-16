@@ -9,16 +9,7 @@ import nepali_datetime
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        exclude = [
-            "version",
-            "year_grade_section",
-            "attendance",
-            "parents",
-            "student_parent",
-            "active",
-            "dob",
-            "admitted_on",
-        ]
+        exclude = ["version", "active", "dob", "admitted_on_bs"]
 
     def clean_dob(self):
         dob_bs = self.cleaned_data["dob_bs"]
@@ -29,21 +20,18 @@ class StudentForm(forms.ModelForm):
             dob_ad = dob_bs.to_datetime_date()
             return dob_ad
 
-    def clean_admitted_on(self):
-        admitted_on_bs = self.cleaned_data["admitted_on_bs"]
-        if admitted_on_bs is not None:
-            admitted_on_bs = nepali_datetime.date(
-                year=admitted_on_bs.year,
-                month=admitted_on_bs.month,
-                day=admitted_on_bs.day,
-            )
-            admitted_on_ad = admitted_on_bs.to_datetime_date()
-            return admitted_on_ad
-
     def save(self, commit: bool = True):
         instance = super().save(commit=False)
-        instance.dob = instance.dob
-        instance.admitted_on = instance.admitted_on
+        if instance.dob_bs:
+            instance.dob = nepali_datetime.date(
+                year=instance.dob_bs.year,
+                month=instance.dob_bs.month,
+                day=instance.dob_bs.day,
+            ).to_datetime_date()
+        if instance.admitted_on:
+            instance.admitted_on_bs = nepali_datetime.date.from_datetime_date(
+                instance.admitted_on
+            )
         return super().save(commit)
 
 
