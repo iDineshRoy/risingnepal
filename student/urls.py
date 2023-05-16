@@ -3,7 +3,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from student.views import (
     StudentView,
-    StudentListView,
+    # StudentListView,
     ParentView,
     StudentParentView,
     YearGradeSectionView,
@@ -36,10 +36,7 @@ spv = StudentParentView()
 ygs = YearGradeSectionView()
 ygss = YearGradeSectionStudentView()
 urlpatterns = (
-    [
-        path("list_students/", StudentListView.as_view(), name="list_students"),
-    ]
-    + sv.url_patterns()
+    sv.url_patterns()
     + pv.url_patterns()
     + spv.url_patterns()
     + ygs.url_patterns()

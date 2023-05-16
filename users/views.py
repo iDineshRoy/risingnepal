@@ -28,7 +28,7 @@ class UserLoginView(LoginView):
     model = CustomUser
     template_name = "login_user.html"
     redirect_authenticated_user = True
-    redirect_field_name = reverse_lazy("list_students")
+    redirect_field_name = reverse_lazy("list_student")
     success_url = "/"
     authentication_form = UserLoginForm
 

@@ -77,27 +77,27 @@ class YearGradeSectionStudentView(BaseView):
     template_name = "list_yeargradesectionstudent.html"
 
 
-class StudentListView(ListView):
-    model = Student
-    template_name = "list_students.html"
-    context_object_name = "students"
-    paginate_by = 10
-    ordering = ["-modified", "-created"]
+# class StudentListView(ListView):
+#     model = Student
+#     template_name = "list_students.html"
+#     context_object_name = "students"
+#     paginate_by = 10
+#     ordering = ["-modified", "-created"]
 
-    def get_queryset(self):
-        students = StudentRepository()
-        students = students.get_all()
-        return students
+#     def get_queryset(self):
+#         students = StudentRepository()
+#         students = students.get_all()
+#         return students
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        student_parents = StudentParent.objects.prefetch_related("student").all()
-        attendance = Attendance.objects.prefetch_related("student").all()
-        yeargradesectionstudent = YearGradeSectionStudent.objects.all()
-        context["attendances"] = attendance
-        context["student_parents"] = student_parents
-        context["yeargradesectionstudent"] = yeargradesectionstudent
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         student_parents = StudentParent.objects.prefetch_related("student").all()
+#         attendance = Attendance.objects.prefetch_related("student").all()
+#         yeargradesectionstudent = YearGradeSectionStudent.objects.all()
+#         context["attendances"] = attendance
+#         context["student_parents"] = student_parents
+#         context["yeargradesectionstudent"] = yeargradesectionstudent
+#         return context
 
 
 class StudentDetailView(DetailView):
@@ -110,7 +110,7 @@ class StudentCreateView(LoginRequiredMixin, CreateView):
     model = Student
     template_name = "student_create.html"
     form_class = StudentForm
-    success_url = reverse_lazy("list_students")
+    success_url = reverse_lazy("list_student")
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -155,7 +155,7 @@ class StudentParentCreateView(LoginRequiredMixin, CreateView):
     model = StudentParent
     form_class = StudentParentForm
     template_name = "create_student_parent.html"
-    success_url = reverse_lazy("list_students")
+    success_url = reverse_lazy("list_student")
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -185,7 +185,7 @@ class StudentParentAssignView(LoginRequiredMixin, CreateView):
     model = StudentParent
     template_name = "student_create.html"
     fields = ["student", "parent", "relationship"]
-    success_url = reverse_lazy("list_students")
+    success_url = reverse_lazy("list_student")
 
     def form_valid(self, form):
         return super().form_valid(form)
