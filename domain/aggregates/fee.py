@@ -6,7 +6,12 @@ from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
 
 from domain.aggregates.base import BaseModel, BaseJunctionModel
-from domain.aggregates import Student, YearGradeSection, YearGradeSectionStudent
+from domain.aggregates import (
+    Student,
+    YearGradeSection,
+    YearGradeSectionStudent,
+    StudentParent,
+)
 from decimal import Decimal
 
 
@@ -51,6 +56,10 @@ class FeeStudent(BaseJunctionModel):
 
 
 class Bill(BaseModel):
+    """
+    This is same as invoice. But, referred as Bill here because it is considered as a domain word.
+    """
+
     STATUS_CHOICES = (
         ("Due", "Due"),
         ("Unpaid", "Unpaid"),
@@ -58,27 +67,40 @@ class Bill(BaseModel):
         ("Void", "Void"),
         ("Paid", "Paid"),
     )
-    fee_student = models.ForeignKey(FeeStudent, on_delete=models.CASCADE, blank=True)
-    fee = models.ForeignKey(Fee, on_delete=models.CASCADE, blank=True)
-    due_date = models.DateField(auto_now=True)
+    fee_student = models.ManyToManyField(FeeStudent)
+    student_parent = models.ForeignKey(StudentParent, on_delete=models.CASCADE)
+    due_date = models.DateField(blank=True, null=True)
     status = models.CharField(max_length=30, choices=STATUS_CHOICES)
 
-    def __str__(self) -> str:
-        return f"{self.due_date} {self.fee_student.year_grade_section_student.student.first_name} {self.fee_student.year_grade_section_student.student.last_name}: {self.fee.fee_type}"
+    # def __str__(self) -> str:
+    #     return f"{self.due_date} {self.fee_student.year_grade_section_student.student.first_name} {self.fee_student.year_grade_section_student.student.last_name}: {self.fee.fee_type}"
 
     def save(self, *args, **kwargs):
-        if (
-            self.fee.year_grade_section
-            != self.fee_student.year_grade_section_student.year_grade_section
-        ):
-            raise ValidationError(
-                "Student and Fee must correlate to the same year, class, section."
-            )
+        super().save(*args, **kwargs)
+        fee_student_ids = self.fee_student.all().values_list("id", flat=True)
+        for feestudent_id in fee_student_ids:
+            feestudent = FeeStudent.objects.get(id=feestudent_id)
+            if (
+                feestudent.year_grade_section_student.student
+                != self.student_parent.student
+            ):
+                self.fee_student.clear()  # Clear the ManyToMany relation if validation fails
+                self.delete()  # Delete the Bill instance if validation fails
+                raise ValidationError(
+                    "Student and Fee must correlate to the same year, class, section, and parents."
+                )
 
     class Meta:
         db_table = "bills"
         app_label = "student"
 
 
-# class Receipt(BaseModel):
-#     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+class Receipt(BaseModel):
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+    image = models.FileField(upload_to="receipt/images/", blank=True, null=True)
+    paid_by = models.CharField(max_length=200)
+    remarks = models.CharField(max_length=500)
+
+    class Meta:
+        db_table = "receipts"
+        app_label = "student"

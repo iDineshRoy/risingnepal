@@ -27,6 +27,7 @@ class Student(BaseModel):
 
     class Meta:
         db_table = "students"
+        unique_together = ("first_name", "last_name", "dob_bs")
         app_label = "student"
 
 

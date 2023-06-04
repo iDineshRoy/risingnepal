@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "users",
     # domain model components
     "rest_framework",
+    "django_select2",
 ]
 
 MIDDLEWARE = [
@@ -103,6 +104,23 @@ DATABASES = {
     }
 }
 
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "default-locmemcache",
+    },
+    # "select2": {
+    #     "BACKEND": "django_redis.cache.RedisCache",
+    #     "LOCATION": "redis://127.0.0.1:6379/2",
+    #     "OPTIONS": {
+    #         "CLIENT_CLASS": "django_redis.client.DefaultClient",
+    #     },
+    # },
+}
+
+# # Tell select2 which cache configuration to use:
+# SELECT2_CACHE_BACKEND = "select2"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

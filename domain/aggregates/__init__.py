@@ -6,4 +6,4 @@ from domain.aggregates.student import (
     Attendance,
     YearGradeSectionStudent,
 )
-from domain.aggregates.fee import Bill, Fee, FeeStudent
+from domain.aggregates.fee import Bill, Fee, FeeStudent, Receipt

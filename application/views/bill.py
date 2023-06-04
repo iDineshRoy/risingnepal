@@ -6,10 +6,10 @@ from django.db.models import F
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
-from domain.aggregates import Fee, FeeStudent
+from domain.aggregates import Fee, FeeStudent, Bill
 
 
-from repositories.forms import FeeForm, FeeStudentForm
+from repositories.forms import FeeForm, FeeStudentForm, BillForm
 
 from application.base import BaseView
 
@@ -30,3 +30,11 @@ class FeeStudentView(BaseView):
     context_object_name = "objects"
     template_name = "list_feestudent.html"
     ordering = ["-fee_date", "-modified", "-created"]
+
+
+class BillView(BaseView):
+    model = Bill
+    form_class = BillForm
+    context_object_name = "bills"
+    template_name = "list_bill.html"
+    ordering = ["-modified", "-created"]
