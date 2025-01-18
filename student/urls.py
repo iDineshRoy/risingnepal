@@ -1,6 +1,3 @@
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
 from student.views import (
     StudentView,
     # StudentListView,
@@ -10,25 +7,7 @@ from student.views import (
     YearGradeSectionStudentView,
 )
 
-from repositories.student import StudentRepository
-from domain.aggregates import Student, Bill
-from django.urls import path, reverse_lazy
-
-from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
-
-from repositories.forms import FeeForm
-from student.forms import StudentForm
-
-from application.base import BaseView
-
 # ---------------------------------------------------- #
-
 
 sv = StudentView()
 pv = ParentView()

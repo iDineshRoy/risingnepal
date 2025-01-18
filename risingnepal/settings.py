@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     "blog.risingnepal.edu.np",
     "www.blog.risingnepal.edu.np",
     "127.0.0.1",
+    "http://localhost:3000",
+    "localhost",
 ]
 
 
@@ -60,6 +62,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -171,5 +174,7 @@ STATIC_ROOT = "/home2/risingnepal/static/"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+]
 # CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
