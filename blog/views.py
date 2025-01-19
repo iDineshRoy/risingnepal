@@ -14,48 +14,39 @@ import functools
 import operator
 from django.http import HttpResponse
 
-from repositories.student import StudentRepository
-
 # from pages.views import get_pages
-
 
 def get_category():
     cat = get_list_or_404(Category)
-    print("This is cat:" + cat)
+    print("This is cat:"+cat)
     if cat is None:
         cat = ""
     return cat
 
-
 def get_recent():
-    return get_list_or_404(Post.objects.order_by("-id")[:8])
-
+    return get_list_or_404(Post.objects.order_by('-id')[:8])
 
 def get_suggestions(slug):
     post = get_object_or_404(Post, slug=slug)
-    tag = post.tags.all()
-    qset = functools.reduce(
-        operator.__and__,
-        [Q(tags__name__iexact=q.name) & Q(status__iexact="Published") for q in tag],
-    )
-    suggestions = (
-        Post.objects.filter(qset).distinct().exclude(slug=slug).order_by("-id")[:4]
-    )
+    tag =  post.tags.all()
+    qset = functools.reduce(operator.__and__, [
+        Q(tags__name__iexact=q.name) &
+        Q(status__iexact='Published') 
+        for q in tag])
+    suggestions = Post.objects.filter(qset).distinct().exclude(slug=slug).order_by('-id')[:4]
     return suggestions
-
 
 def paginate(request, posts):
     paginator = Paginator(posts, 3)
     try:
-        page = int(request.GET.get("page", "1"))
+        page = int(request.GET.get('page','1'))
     except:
         page = 1
     try:
         obj = paginator.page(page)
-    except (EmptyPage, InvalidPage):
+    except(EmptyPage, InvalidPage):
         obj = paginator.page(paginator.num_pages)
     return obj
-
 
 def posts(request):
     context = {}
@@ -63,40 +54,39 @@ def posts(request):
         # qset = functools.reduce(operator.__and__, [
         #     Q(status__iexact='Published')
         #     ])
-        posts = Post.objects.all().order_by("-id")
-
+        posts = Post.objects.all().order_by('-id')
         if posts is not None:
-            context["posts"] = paginate(request, posts)
+            context['posts'] = paginate(request, posts)
         else:
-            context["posts"] = paginate(request, {})
+            context['posts'] = paginate(request, {})
         date = datetime.now()
         obj2 = FeaturedPost.objects.filter(
-            Q(startdate__lte=date) & Q(enddate__gte=date)
+            Q(startdate__lte=date)&
+            Q(enddate__gte=date)
         )
-        context["featured"] = obj2
-        context["recent"] = get_recent()
+        context['featured'] =obj2
+        context['recent'] = get_recent()
     except:
         pass
-    return render(request, "post_list.html", context)
-
+    return render(request, 'post_list.html', context)
 
 def showpost(request, slug):
     post = get_object_or_404(Post, slug=slug)
-    context = {"post": post}
-    context["suggestions"] = get_suggestions(post.slug)
-    return render(request, "post.html", context)
-
+    context =  { 'post': post }
+    context['suggestions'] = get_suggestions(post.slug)
+    return render(request, 'post.html', context)
 
 def model_form_upload(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect("/")
+            return redirect('/')
     else:
         form = DocumentForm()
-    return render(request, "file_upload.html", {"form": form})
-
+    return render(request, 'file_upload.html', {
+        'form': form
+    })
 
 @login_required
 def create_post(request):
@@ -112,24 +102,23 @@ def create_post(request):
         print(newpost.slug)
         newpost.save()
         form.save_m2m()
-        files = request.FILES.getlist("image")
+        files = request.FILES.getlist('image')
         for f in files:
             instance = Images(image=f)
             instance.post = newpost
             print("Saving multiple images")
             instance.save()
-        return redirect("/")
-
+        return redirect('/')
+    
     context = {
-        "posts": posts,
-        "common_tags": common_tags,
-        "form": form,
-        "form_image": form_image,
+        'posts': posts,
+        'common_tags':common_tags, 
+        'form':form,
+        'form_image':form_image
     }
     # context['menu'] = get_category()
     # context['pages'] = get_pages()
-    return render(request, "newpost.html", context)
-
+    return render(request, 'newpost.html',context)
 
 def create_category(request):
     form = NewCategoryForm(request.POST)
@@ -137,12 +126,11 @@ def create_category(request):
         obj = form.save(commit=False)
         obj.slug = slugify(unidecode(obj.name))
         obj.save()
-        return redirect("/")
-    context = {"form": form}
-    context["menu"] = get_category()
+        return redirect('/')
+    context = { 'form': form }
+    context['menu'] = get_category()
     # context['pages'] = get_pages()
-    return render(request, "newcategory.html", context)
-
+    return render(request, 'newcategory.html', context)
 
 def update_category(request, slug):
     obj = Category.objects.get(slug=slug)
@@ -151,44 +139,40 @@ def update_category(request, slug):
         obj = form.save(commit=False)
         obj.slug = slugify(unidecode(obj.name))
         obj.save()
-        return redirect("/")
-    context = {"form": form}
-    context["menu"] = get_category()
+        return redirect('/')
+    context = { 'form': form }
+    context['menu'] = get_category()
     # context['pages'] = get_pages()
-    return render(request, "newcategory.html", context)
-
+    return render(request, 'newcategory.html', context)
 
 def all_categories(request):
     obj = get_list_or_404(Category)
-    context = {"categories": obj}
-    context["menu"] = get_category()
+    context = { 'categories':obj }
+    context['menu'] = get_category()
     # context['pages'] = get_pages()
-    return render(request, "categories.html", context)
-
+    return render(request, 'categories.html', context)
 
 def show_post_category(request, slug):
     cat = get_object_or_404(Category, slug=slug)
     posts = get_list_or_404(Post, category=cat)
     context = {}
-    context["menu"] = get_category()
+    context['menu'] = get_category()
     # context['pages'] = get_pages()
-    context["posts"] = paginate(request, posts)
-    return render(request, "post.html", context)
-
+    context['posts'] = paginate(request, posts)
+    return render(request, 'post.html', context)
 
 def tagged(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     posts = get_list_or_404(Post, tags=tag)
     context = {
-        "tag": tag,
+        'tag': tag,
     }
     # context['menu'] = get_category()
-    context["recent"] = get_recent()
+    context['recent'] = get_recent()
     # context['pages'] = get_pages()
-    context["posts"] = paginate(request, posts)
-    context["suggestions"] = get_suggestions(posts[0].slug)
-    return render(request, "post_list.html", context)
-
+    context['posts'] = paginate(request, posts)
+    context['suggestions'] = get_suggestions(posts[0].slug)
+    return render(request, 'post_list.html', context)
 
 @login_required
 def update_post(request, slug):
@@ -198,29 +182,23 @@ def update_post(request, slug):
     form = UpdatePostForm(request.POST or None, request.FILES or None, instance=post)
     if form.is_valid():
         obj = form.save(commit=False)
-        s = request.POST["title"]
+        s = request.POST['title']
         obj.slug = slugify(unidecode(s))
         obj.save()
         form.save_m2m()
-        return redirect("/blog/post/" + str(obj.slug))
-    if form_image.is_valid():
-        files = request.FILES.getlist("image")
+        return redirect('/blog/post/'+str(obj.slug))
+    if(form_image.is_valid()):
+        files = request.FILES.getlist('image')
         print(files)
         for f in files:
             instance = Images(image=f)
             instance.post = post
             instance.save()
         return redirect("/")
-    context = {
-        "title": "Update Post",
-        "form": form,
-        "images": images,
-        "form_image": form_image,
-    }
+    context = {"title": "Update Post", "form":form,'images':images, 'form_image':form_image}
     # context['menu'] = get_category()
     # context['pages'] = get_pages()
-    return render(request, "newpost.html", context)
-
+    return render(request, 'newpost.html', context)
 
 def edit_about(request):
     # try

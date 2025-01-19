@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,8 +32,6 @@ ALLOWED_HOSTS = [
     "blog.risingnepal.edu.np",
     "www.blog.risingnepal.edu.np",
     "127.0.0.1",
-    "http://localhost:3000",
-    "localhost",
 ]
 
 
@@ -47,22 +45,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "result",
-    "nepali_datetime_field",
     "blog",
     "ckeditor",
     "taggit",
-    # "accounts",
+    "accounts",
     "bootstrap5",
     "qbank",
-    "student",
-    "users",
-    # domain model components
-    "rest_framework",
-    "django_select2",
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -72,16 +63,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-]
-
 ROOT_URLCONF = "risingnepal.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["application/templates"],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -108,23 +95,6 @@ DATABASES = {
 }
 
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "default-locmemcache",
-    },
-    # "select2": {
-    #     "BACKEND": "django_redis.cache.RedisCache",
-    #     "LOCATION": "redis://127.0.0.1:6379/2",
-    #     "OPTIONS": {
-    #         "CLIENT_CLASS": "django_redis.client.DefaultClient",
-    #     },
-    # },
-}
-
-# # Tell select2 which cache configuration to use:
-# SELECT2_CACHE_BACKEND = "select2"
-
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -143,9 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "users.CustomUser"
-
-LOGIN_REDIRECT_URL = "/"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -160,7 +127,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -174,7 +140,5 @@ STATIC_ROOT = "/home2/risingnepal/static/"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
-]
+
 # CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'

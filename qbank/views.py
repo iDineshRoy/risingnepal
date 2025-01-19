@@ -43,7 +43,7 @@ def view_year(request):
     new_path = os.path.join(BASE_DIR, path)
     context['years'] = sorted(os.listdir(new_path))
     context['path'] = path
-    return render(request, 'show_year.html', context)
+    return render(request, 'year_temp.html', context)
 
 def show_terms(request, year):
     context = {}

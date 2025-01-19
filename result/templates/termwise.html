@@ -2,42 +2,42 @@
 {% block content %}
 
 <h2 align="center">Rising Nepal Secondary Boarding School</h2>
-	<h3 align="center">Grade-Sheet</h3>
-	<hr>
-	<div class="container">
-
-<div class="alert alert-primary" role="alert">
-	NAME: {{ students_name }} <br>CLASS: {{ clas }}
-</div>
+<h3 align="center">Grade-Sheet</h3>
 <hr>
-<table class="table table-striped">
-	<tr>
-		<th>SUBJECTS</th><th>CREDIT HOURS</th><th>OBTAINED GRADE</th><th>GRADE POINT</th>
-	</tr>	
-	{% for s in data %}
-	
-	<tr>
-		<td>{{ s.subjects }}</td><td>4</td><td>{{ s.grade }}</td><td>{{ s.grade_point }}</td>
-	</tr>
-	
-	{% endfor %}
-	
-</table>
+<div class="container">
+
+  <div class="alert alert-primary" role="alert">
+      NAME: {{ students_name }} <br>CLASS: {{ clas }}
+  </div>
+  <hr>
+  <table class="table table-striped">
+      <tr>
+          <th>SUBJECTS</th><th>CREDIT HOURS</th><th>OBTAINED GRADE</th><th>GRADE POINT</th>
+      </tr>	
+      {% for s in data %}
+
+      <tr>
+          <td>{{ s.subjects }}</td><td>4</td><td>{{ s.grade }}</td><td>{{ s.grade_point }}</td>
+      </tr>
+
+      {% endfor %}
+
+  </table>
 
 
-	<div class="alert alert-success" role="alert">
-		GRADE POINT AVERAGE (GPA): {{ gpa }} <br>
-		ATTENDANCE: {{ attendance }}
-</div>
-<hr>
-	{% if exams_filename %}
+      <div class="alert alert-success" role="alert">
+          GRADE POINT AVERAGE (GPA): {{ gpa }} <br>
+          ATTENDANCE: {{ attendance }}
+  </div>
+  <hr>
+  {% if exams_filename %}
 	<div>
 		<small>Above Grade-Sheet is combined from: {% for s in exams_filename %} {{ s }}, {% endfor %} exams.</small>
 	</div>
 	<br>
     {% endif %}
     <div>
-      <table class="table table-secondary">
+      <table class="table table-light">
       <tr>
       <th>S.N.</th><th>Percentage Interval</th><th>Grade Point</th><th>Grade</th><th>Description</th>
       </tr>
@@ -70,12 +70,8 @@
       </tr>
     </table>
     </div>
-	
 </div>
 	
-
-  
-
 
 
 {% endblock %}

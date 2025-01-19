@@ -1,0 +1,1 @@
+from risingnepal.wsgi import application
